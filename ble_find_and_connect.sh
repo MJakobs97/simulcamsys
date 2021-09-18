@@ -27,3 +27,23 @@ while IFS= read -r line; do
 done < tmp_storage/isolated_mac.txt
 
 echo "$counter devices paired"
+
+echo "The following devices have been connected: "
+	bluetoothctl -- devices
+	sleep 5
+
+let counter2=0
+
+while IFS= read -r line2; do
+	echo $line2 to be removed
+	sleep3
+	bluetoothctl -- remove $line2
+	sleep 1
+	let counter2++
+	echo "$line2 removed"
+done < tmp_storage/isolated_mac.txt
+
+echo "$counter2 devices removed"
+
+> tmp_storage/isolated_mac.txt
+> tmp_storage/found_devices.txt
