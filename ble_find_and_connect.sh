@@ -1,5 +1,17 @@
 #!/bin/sh
 
+DIRECTORY="/tmp_storage"
+FILE_found_dev="/tmp_storage/found_devices.txt"
+FILE_isolated_mac="/tmp_storage/isolated_mac.txt"
+
+if [ -d "$DIRECTORY" ]; then
+	#this may require authentication if not run with sudo
+	mkdir tmp_storage
+	touch tmp_storage/found_devices.txt
+	touch tmp_storage/isolated_mac.txt
+	echo "DNF - required data structure created!"
+fi
+
 echo "ble scan on"
 bluetoothctl --scan on & > /dev/null
 sleep 10
