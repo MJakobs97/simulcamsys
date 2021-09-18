@@ -49,7 +49,7 @@ let counter2=0
 while IFS= read -r line2; do
 	echo $line2 to be removed
 	sleep3
-	bluetoothctl -- remove $line2
+	bluetoothctl -- remove $line2 & > /dev/null
 	sleep 1
 	let counter2++
 	echo "$line2 removed"
