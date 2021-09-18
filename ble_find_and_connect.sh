@@ -45,5 +45,17 @@ done < tmp_storage/isolated_mac.txt
 
 echo "$counter2 devices removed"
 
+#creating list of mac addresses to use with gopro-ble-py
+address_list=" "
+
+while IFS= read -r line3; do
+	address_list+=$line3,
+done < tmp_storage/isolated_mac.txt
+
+#remove last "," from list
+address_list=${address_list::-1}
+
+echo $address_list
+
 > tmp_storage/isolated_mac.txt
 > tmp_storage/found_devices.txt
