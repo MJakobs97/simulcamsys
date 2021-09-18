@@ -12,14 +12,14 @@ if [ -d "$DIRECTORY" ]; then
 	echo "DNF - required data structure created!"
 fi
 
-echo "ble scan on"
+echo "*** Scanning for pairable bluetooth devices - please wait ***"
 bluetoothctl --scan on & > /dev/null
 sleep 10
 bluetoothctl --scan off & > /dev/null
-echo "ble scan off"
+echo "*** Scanning complete ***"
 
 bluetoothctl -- devices >> tmp_storage/found_devices.txt
-sleep 5 && echo "finished scanning"
+sleep 5 && echo "*** Discovered Devices have been saved ***"
 
 #grep out the mac address from "Device [MacAddress] [Identifier]" and store in file
 grep -iEo '([[:space:]][a-fA-F0-9]{2})([ :-]([a-fA-F0-9]{2})){5}' tmp_storage/found_devices.txt >> tmp_storage/isolated_mac.txt
