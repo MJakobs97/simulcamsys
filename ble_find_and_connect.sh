@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#This script relies on the following packages: bluez bluez-utils
+
 DIRECTORY="/tmp_storage"
 FILE_found_dev="/tmp_storage/found_devices.txt"
 FILE_isolated_mac="/tmp_storage/isolated_mac.txt"
