@@ -23,9 +23,13 @@ def get_or_create_eventloop():
             return asyncio.get_running_loop()
 
 async def force_client_connect(c):
+    #loop = get_or_create_eventloop()
+    #loop.run(c.connect())
     await c.connect(timeout=15)
 
 async def force_client_pair(c):
+    #loop = get_or_create_eventloop()
+    #loop.run(c.pair())
     await c.pair()
 
 def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
@@ -66,14 +70,15 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
-             force_client_connect(client)             
+             asyncio.run(force_client_connect(client))
+             #asyncio.run(client.connect(timeout=15))
 
              logger.info("BLE Connected!")
 
 	     # Try to pair (on some OS's this will expectedly fail)
              logger.info("Attempting to pair...")
              try:
-                 force_client_pair(client)
+                 asyncio.run(force_client_pair(client))
              except NotImplementedError:
         	 # This is expected on Mac
                  pass
@@ -84,9 +89,9 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
              for service in client.services:
                  for char in service.characteristics:
                      if "notify" in char.properties:
-                         logger.info(f"Enabling notification on char {char.uuid}")
-                         #await client.start_notify(char, notification_handler)
+                         logger.info(f"Enabling notification on char {char.uuid}")                         
                          asyncio.run(client.start_notify(char, notification_handler))
+
              logger.info("Done enabling notifications")
              all_clients.append(client)
 
