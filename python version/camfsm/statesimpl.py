@@ -1,17 +1,28 @@
 from state import State
 import subprocess
 
+import re
+import asyncio
+import logging
+import argparse
+import time
+from typing import Dict, Any, List, Callable, Pattern
+
+from bleak import BleakScanner, BleakClient
+from bleak.backends.device import BLEDevice as BleakDevice
+
+
 class IdleState(State):
 
     def on_event(self, event):
 
        if event == 'dms1':
-	for client in clients:
-	 await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
+        for client in clients:
+         await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
        return RecordingState()
        
        if event == 'dms2':
-       return ConnectingState()
+        return ConnectingState()
 
        return self
 
@@ -20,13 +31,13 @@ class IdleState(State):
 class RecordingState(State):
     
     def on_event(self, event):
-        if event == 'dms0':
-	 for client in clients:
-	  await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
+       if event == 'dms0':
+        for client in clients:
+         await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
         return IdleState()
-        if event == 'dms1':
-            print(self.count)
-            self.count+=1
+       if event == 'dms1':
+        print(self.count)
+        self.count+=1
 
         return self
     

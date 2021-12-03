@@ -1,7 +1,5 @@
 from statemachine import StateMachine
-#import keyboard
 import time
-#from pynput import keyboard
 from gpiozero import Button
 from signal import pause
 
