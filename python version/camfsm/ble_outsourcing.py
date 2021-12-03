@@ -16,12 +16,17 @@ def get_or_create_eventloop():
     try:
         return asyncio.get_event_loop()
     except RuntimeError as ex:
-        if "no running event loop" in str(ex):
+        print(ex)
+        if "There is no current event loop in thread" in str(ex):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            return asyncio.get_event_loop()
+            return asyncio.get_running_loop()
 
+async def force_client_connect(c):
+    await c.connect(timeout=15)
 
+async def force_client_pair(c):
+    await c.pair()
 
 def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
    	    # Map of discovered devices indexed by name
@@ -63,8 +68,14 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
              client = BleakClient(device)
              #await client.connect(timeout=15)
              
+             #loop = get_or_create_eventloop()
+             #print(str(loop))
+             #print("Loop running: ", str(loop.is_running()))
+             #asyncio.run(client.connect(timeout=15))
+             #loop.run(client.connect(timeout=15))
 
-             asyncio.run(client.connect(timeout=15))
+             force_client_connect(client)             
+
              logger.info("BLE Connected!")
 
 	     # Try to pair (on some OS's this will expectedly fail)
@@ -76,10 +87,12 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 
                  #asyncio.set_event_loop(asyncio.new_event_loop())
                  #asyncio.get_running_loop().run(client.pair())
-                 loop = get_or_create_eventloop()
-                 loop.run(client.pair())
-
-
+                 #loop = get_or_create_eventloop()
+                 #print(str(loop.is_running()))
+                 #loop.run(client.pair())
+                 
+                 force_client_pair(client)
+                 
 
              except NotImplementedError:
         	 # This is expected on Mac
