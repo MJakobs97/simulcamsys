@@ -1,4 +1,5 @@
 from state import State
+from ble_outsourcing import connect_ble
 import subprocess
 import re
 import asyncio
@@ -83,10 +84,15 @@ class ConnectingState(State):
         COMMAND_RSP_UUID = GOPRO_BASE_UUID.format("0073")
         SETTINGS_REQ_UUID = GOPRO_BASE_UUID.format("0074")
         SETTINGS_RSP_UUID = GOPRO_BASE_UUID.format("0075")	
-    
+	
+        parser = argparse.ArgumentParser(description="Connect to a GoPro camera, pair, then enable notifications.")
+        parser.add_argument("-i","--identifier",type=str,help="Last 4 digits of GoPro serial number, which is the last 4 digits of the default camera SSID. If not used, first discovered GoPro will be connected to",default=None)    
+        args = parser.parse_args()
+
+
         print("Running connect_ble asynchronously...")
         #clients = await connect_ble(dummy_notification_handler, identifier)
-        clients = asyncio.run(connect_ble(dummy_notification_handler, identifier))
+        clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
         conn_flag = "1"
         return IdleState()	
 

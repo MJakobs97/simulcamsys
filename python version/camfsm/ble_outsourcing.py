@@ -3,6 +3,25 @@ import re
 import asyncio
 import logging
 import time
+import argparse
+from typing import Dict, Any, List, Callable, Pattern
+
+from bleak import BleakScanner, BleakClient
+from bleak.backends.device import BLEDevice as BleakDevice
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
+def get_or_create_eventloop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "no running event loop" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
+
+
 
 def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
    	    # Map of discovered devices indexed by name
@@ -21,7 +40,7 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
             while len(matched_devices) == 0:
 	        # Now get list of connectable advertisements
                 #for device in await BleakScanner.discover(timeout=5, detection_callback=_scan_callback):
-                for device in asyncio.run(BleakScann.discover(timeout=5, detection_callback=_scan_callback)):
+                for device in asyncio.run(BleakScanner.discover(timeout=5, detection_callback=_scan_callback)):
                     if device.name != "Unknown" and device.name is not None:
                         devices[device.name] = device
 	        # Log every device we discovered
@@ -43,14 +62,25 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
              #await client.connect(timeout=15)
-             asyincio.run(client.connect(timeout=15))
+             
+
+             asyncio.run(client.connect(timeout=15))
              logger.info("BLE Connected!")
 
 	     # Try to pair (on some OS's this will expectedly fail)
              logger.info("Attempting to pair...")
              try:
                  #await client.pair()
-                 asyncio.run(client.pair())
+                 #if asyncio.get_event_loop().is_closed():
+
+
+                 #asyncio.set_event_loop(asyncio.new_event_loop())
+                 #asyncio.get_running_loop().run(client.pair())
+                 loop = get_or_create_eventloop()
+                 loop.run(client.pair())
+
+
+
              except NotImplementedError:
         	 # This is expected on Mac
                  pass
