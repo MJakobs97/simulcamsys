@@ -15,7 +15,8 @@ def BT_rec_start():
 	print('trigger pressed')
 	sm.on_event('dms1')	
 
-trigger = Button(3, hold_time=0.5)
+trigger = Button(3, hold_time=0.25)
+button_conn = Button(4, hold_time=1)
 
 sm = StateMachine()
 
