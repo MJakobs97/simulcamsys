@@ -44,7 +44,7 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
             matched_devices: List[BleakDevice] = []
             while len(matched_devices) == 0:
 	        # Now get list of connectable advertisements
-                #for device in await BleakScanner.discover(timeout=5, detection_callback=_scan_callback):
+                
                 for device in asyncio.run(BleakScanner.discover(timeout=5, detection_callback=_scan_callback)):
                     if device.name != "Unknown" and device.name is not None:
                         devices[device.name] = device
@@ -66,14 +66,6 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
-             #await client.connect(timeout=15)
-             
-             #loop = get_or_create_eventloop()
-             #print(str(loop))
-             #print("Loop running: ", str(loop.is_running()))
-             #asyncio.run(client.connect(timeout=15))
-             #loop.run(client.connect(timeout=15))
-
              force_client_connect(client)             
 
              logger.info("BLE Connected!")
@@ -81,19 +73,7 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 	     # Try to pair (on some OS's this will expectedly fail)
              logger.info("Attempting to pair...")
              try:
-                 #await client.pair()
-                 #if asyncio.get_event_loop().is_closed():
-
-
-                 #asyncio.set_event_loop(asyncio.new_event_loop())
-                 #asyncio.get_running_loop().run(client.pair())
-                 #loop = get_or_create_eventloop()
-                 #print(str(loop.is_running()))
-                 #loop.run(client.pair())
-                 
                  force_client_pair(client)
-                 
-
              except NotImplementedError:
         	 # This is expected on Mac
                  pass
