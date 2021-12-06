@@ -37,25 +37,16 @@ class IdleState(State):
        pass
 
    def on_event(self, event):
-       print(event)
+       print("Event: ", event)
        global conn_flag
-       print(conn_flag)
-       #WARNING, THIS CONDITION IS MET, EVEN IF event == 'dms2' !
+       print("Conn_flag: ", conn_flag)
+       
+       
        if ((event == 'dms1') & (conn_flag == "1")):
         for client in clients:
-         #await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
-         #asyncio.run(self.recordStart(client))
+         
          address = COMMAND_REQ_UUID
          asyncio.run(rec_start(client, address))
-
-         #loop = asyncio.new_event_loop()
-         #task = loop.create_task(self.recordStart(client))
-
-         try: 
-          #loop.run_until_complete(task)
-          print("mist")
-         finally:
-          pass
 
         return RecordingState()
        
@@ -79,10 +70,8 @@ class RecordingState(State):
      print("Running: ", str(loop.is_running()))
 
      try:
-      #loop.run_until_complete(client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0])))
       await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
-      #await loop.run_in_executor(None, client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0])))
-
+      
      finally:
       #loop.stop()
       #time.sleep(0.5)
@@ -92,13 +81,9 @@ class RecordingState(State):
     def on_event(self, event):
        if event == 'dms0':
         for client in clients:
-         #await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
-         #asyncio.run(self.recordStop(client))
+         
          address = COMMAND_REQ_UUID
          asyncio.run(rec_stop(client, address))
-
-         #loop = asyncio.new_event_loop()
-         #task = loop.create_task(self.recordStop(client))
 
          try:
           #loop.run_until_complete(task)
@@ -148,6 +133,8 @@ class ConnectingState(State):
         parser = argparse.ArgumentParser(description="Connect to a GoPro camera, pair, then enable notifications.")
         parser.add_argument("-i","--identifier",type=str,help="Last 4 digits of GoPro serial number, which is the last 4 digits of the default camera SSID. If not used, first discovered GoPro will be connected to",default=None)    
         args = parser.parse_args()
+
+	
 
 
         print("Running connect_ble asynchronously...")
