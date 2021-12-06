@@ -32,7 +32,14 @@ async def force_client_pair(c):
     #loop.run(c.pair())
     await c.pair()
 
-def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
+async def rec_start(client, address):
+    await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+
+async def rec_stop(client, address):
+    await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+
+
+async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
    	    # Map of discovered devices indexed by name
             devices: Dict[str, BleakDevice] = {}
 
@@ -49,7 +56,8 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
             while len(matched_devices) == 0:
 	        # Now get list of connectable advertisements
                 
-                for device in asyncio.run(BleakScanner.discover(timeout=5, detection_callback=_scan_callback)):
+                #for device in asyncio.run(BleakScanner.discover(timeout=5, detection_callback=_scan_callback)):
+                for device in await BleakScanner.discover(timeout=5, detection_callback=_scan_callback):
                     if device.name != "Unknown" and device.name is not None:
                         devices[device.name] = device
 	        # Log every device we discovered
@@ -70,7 +78,8 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
-             asyncio.run(force_client_connect(client))
+             await client.connect(timeout=15)
+             #asyncio.run(force_client_connect(client))
              #asyncio.run(client.connect(timeout=15))
 
              logger.info("BLE Connected!")
@@ -78,7 +87,7 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
 	     # Try to pair (on some OS's this will expectedly fail)
              logger.info("Attempting to pair...")
              try:
-                 asyncio.run(force_client_pair(client))
+                 await client.pair()
              except NotImplementedError:
         	 # This is expected on Mac
                  pass
@@ -90,7 +99,8 @@ def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: 
                  for char in service.characteristics:
                      if "notify" in char.properties:
                          logger.info(f"Enabling notification on char {char.uuid}")                         
-                         asyncio.run(client.start_notify(char, notification_handler))
+                         #asyncio.run(client.start_notify(char, notification_handler))
+                         await client.start_notify(char, notification_handler)
 
              logger.info("Done enabling notifications")
              all_clients.append(client)

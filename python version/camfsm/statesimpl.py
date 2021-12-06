@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble
+from ble_outsourcing import connect_ble, rec_start, rec_stop
 import subprocess
 import re
 import asyncio
@@ -19,6 +19,23 @@ class IdleState(State):
    def __init__(self):
     print("Switched to: ", str(self))
 
+   async def recordStart(self, client):
+      print("Attempting to fetch event loop")
+      loop = asyncio.get_running_loop()
+      print("Loop: \n", str(loop))
+      print("Running: ", str(loop.is_running()))
+      
+      try:
+       #loop.run_until_complete(client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1])))
+       await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
+       #await loop.run_in_executor(None, client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1])))
+      finally:
+       #loop.stop()
+       #time.sleep(0.5)
+       #loop.close()
+       print("mist")
+       pass
+
    def on_event(self, event):
        print(event)
        global conn_flag
@@ -26,7 +43,20 @@ class IdleState(State):
        #WARNING, THIS CONDITION IS MET, EVEN IF event == 'dms2' !
        if ((event == 'dms1') & (conn_flag == "1")):
         for client in clients:
-         asyncio.run(client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1])))
+         #await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
+         #asyncio.run(self.recordStart(client))
+         address = COMMAND_REQ_UUID
+         asyncio.run(rec_start(client, address))
+
+         #loop = asyncio.new_event_loop()
+         #task = loop.create_task(self.recordStart(client))
+
+         try: 
+          #loop.run_until_complete(task)
+          print("mist")
+         finally:
+          pass
+
         return RecordingState()
        
        if event == 'dms2':
@@ -41,11 +71,41 @@ class RecordingState(State):
 
     def __init__(self):
      print("Switched to: ", str(self))
-    
+
+    async def recordStop(self, client):
+     print("Attempting to fetch event loop")
+     loop = asyncio.get_running_loop()
+     print("Loop: \n", str(loop))
+     print("Running: ", str(loop.is_running()))
+
+     try:
+      #loop.run_until_complete(client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0])))
+      await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
+      #await loop.run_in_executor(None, client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0])))
+
+     finally:
+      #loop.stop()
+      #time.sleep(0.5)
+      #loop.close()
+      pass
+
     def on_event(self, event):
        if event == 'dms0':
         for client in clients:
-         asyncio.run(client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0])))
+         #await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
+         #asyncio.run(self.recordStop(client))
+         address = COMMAND_REQ_UUID
+         asyncio.run(rec_stop(client, address))
+
+         #loop = asyncio.new_event_loop()
+         #task = loop.create_task(self.recordStop(client))
+
+         try:
+          #loop.run_until_complete(task)
+           print("mist")
+         finally:
+          pass
+
         return IdleState()
        if event == 'dms1':
         print(self.count)

@@ -1,5 +1,6 @@
 from statemachine import StateMachine
 import time
+import asyncio
 from gpiozero import Button
 from signal import pause
 
@@ -13,7 +14,7 @@ def BT_rec_stop():
 
 def BT_rec_start():
  print('recording trigger pressed!')
- sm.on_event('dms1')	
+ sm.on_event('dms1')
 
 trigger = Button(3, hold_time=0.25)
 button_conn = Button(4, hold_time=1)
