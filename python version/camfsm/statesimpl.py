@@ -140,7 +140,7 @@ class ConnectingState(State):
          loop = asyncio.get_running_loop()
          print("Loop: \n", loop)
          print("\n\n")
-        finally:
+        except Exception as e:
          print("No running loop!")
          loop = asyncio.get_event_loop()
          print("Loop: \n", loop)
@@ -158,7 +158,7 @@ class ConnectingState(State):
          loop = asyncio.get_running_loop()
          print("Loop: \n", loop)
          print("\n\n")
-        finally: 
+        except Exception as e:
          print("No running loop!")
          loop = asyncio.get_event_loop()
          print("Loop: \n", loop)
