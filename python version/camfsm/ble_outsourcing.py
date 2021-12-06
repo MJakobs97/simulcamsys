@@ -1,6 +1,7 @@
 import subprocess
 import re
 import asyncio
+#import trio
 import logging
 import time
 import argparse
@@ -15,28 +16,32 @@ logger = logging.getLogger()
 def get_or_create_eventloop():
     try:
         return asyncio.get_event_loop()
-    except RuntimeError as ex:
-        print(ex)
+    except:
+        print("No current event loop in thread")
         if "There is no current event loop in thread" in str(ex):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             return asyncio.get_running_loop()
 
-async def force_client_connect(c):
-    #loop = get_or_create_eventloop()
-    #loop.run(c.connect())
-    await c.connect(timeout=15)
-
-async def force_client_pair(c):
-    #loop = get_or_create_eventloop()
-    #loop.run(c.pair())
-    await c.pair()
-
 async def rec_start(client, address):
-    await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+    try:
+     loop = asyncio.new_event_loop()
+     
+     print("rec_start - Loop data: \n", loop)
+     asyncio.set_event_loop(loop)
+     asyncio.run(await client.write_gatt_char(address, bytearray([3, 1, 1, 1])))
+    except Exception as e:
+     print(e)
 
 async def rec_stop(client, address):
-    await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+    try:
+     loop= asyncio.new_event_loop()
+     
+     print("rec_stop - Loop data: \n")
+     asyncio.set_event_loop(loop)
+     asyncio.run(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
+    except Exception as e:
+     print(e)
 
 
 async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
