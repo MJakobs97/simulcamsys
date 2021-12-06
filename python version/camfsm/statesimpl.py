@@ -134,12 +134,21 @@ class ConnectingState(State):
         parser.add_argument("-i","--identifier",type=str,help="Last 4 digits of GoPro serial number, which is the last 4 digits of the default camera SSID. If not used, first discovered GoPro will be connected to",default=None)    
         args = parser.parse_args()
 
-	
+        print("Data about event loop b4 connect_ble: \n")
+        loop = asyncio.get_running_loop()
+        print("Loop: \n", loop)
+        print("\n\n")
 
 
         print("Running connect_ble asynchronously...")
         #clients = await connect_ble(dummy_notification_handler, identifier)
         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
+        
+        print("Data about event loop after connect_ble: \n")
+        loop = asyncio.get_running_loop()
+        print("Loop: \n", loop)
+        print("\n\n")
+        
         conn_flag = "1"
         return IdleState()	
 
