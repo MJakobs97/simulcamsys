@@ -137,13 +137,11 @@ class ConnectingState(State):
 
         try:
          print("Data about event loop b4 connect_ble: \n")
-         loop = asyncio.get_running_loop()
-         print("Loop: \n", loop)
-         print("\n\n")
-        except Exception as e:
-         print("No running loop!")
          loop = asyncio.get_event_loop()
          print("Loop: \n", loop)
+         print("\n\n")
+        except:
+         print("No running loop!")
          print("\n\n")     
 
 
@@ -155,13 +153,11 @@ class ConnectingState(State):
 
         try:
          print("Data about event loop after connect_ble: \n")
-         loop = asyncio.get_running_loop()
-         print("Loop: \n", loop)
-         print("\n\n")
-        except Exception as e:
-         print("No running loop!")
          loop = asyncio.get_event_loop()
          print("Loop: \n", loop)
+         print("\n\n")
+        except:
+         print("No running loop!")
          print("\n\n")   
 
         conn_flag = "1"
