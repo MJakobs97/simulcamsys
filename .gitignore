@@ -1,2 +1,7 @@
 
 python version/open-gopro-demos
+
+*.jpg
+*.png
+*.drawio
+*.sh
