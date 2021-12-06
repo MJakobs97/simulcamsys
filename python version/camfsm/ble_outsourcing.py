@@ -40,7 +40,9 @@ async def rec_stop(client, address):
 
 
 async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
-   	    # Map of discovered devices indexed by name
+   	    #DO NOT TOUCH THIS FUNCTION! IT IS WORKING AS EXPECTED!
+            
+            # Map of discovered devices indexed by name
             devices: Dict[str, BleakDevice] = {}
 
 	    # Scan for devices
@@ -79,8 +81,6 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
              await client.connect(timeout=15)
-             #asyncio.run(force_client_connect(client))
-             #asyncio.run(client.connect(timeout=15))
 
              logger.info("BLE Connected!")
 
@@ -99,7 +99,6 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
                  for char in service.characteristics:
                      if "notify" in char.properties:
                          logger.info(f"Enabling notification on char {char.uuid}")                         
-                         #asyncio.run(client.start_notify(char, notification_handler))
                          await client.start_notify(char, notification_handler)
 
              logger.info("Done enabling notifications")
