@@ -1,11 +1,14 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, rec_start_norm
+
+import os
 import subprocess
 import re
 import asyncio
 import logging
 import argparse
 #import time
+#import trio
 from typing import Dict, Any, List, Callable, Pattern
 
 from bleak import BleakScanner, BleakClient
@@ -26,12 +29,19 @@ class IdleState(State):
        
        
        if ((event == 'dms1') & (conn_flag == "1")):
-        for client in clients:
-         address = COMMAND_REQ_UUID
-         asyncio.run(rec_start(client, address))
+        try:
+         addresses = ""
+         for client in clients:
+          address = COMMAND_REQ_UUID
+          #trio.run(rec_start, client, address)
+          #rec_start_norm(client, address)
+          addresses = addresses + client.address + " " 
+         call = "sudo python ./main.py --address "+addresses+" --command "+ """ +"record start"+ """
+         os.system(call)
+         return RecordingState()
+        except Exception as ex: 
+         print("Exception in IdleSate.on_event(): \n", ex)
 
-        return RecordingState()
-       
        if event == 'dms2':
         print("dms2 == 1, acting accordingly")
         return ConnectingState()
@@ -49,7 +59,7 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         asyncio.run(rec_stop(client, address))
+         #trio.run(rec_stop(client, address))
 
         return IdleState()
        if event == 'dms1':
@@ -95,14 +105,14 @@ class ConnectingState(State):
         args = parser.parse_args()
 
 
-        try:
-         print("Data about event loop b4 connect_ble: \n")
-         loop = asyncio.get_event_loop()
-         print("Loop: \n", loop)
-         print("\n\n")
-        except:
-         print("No running loop!")
-         print("\n\n")     
+        #try:
+         #print("Data about event loop b4 connect_ble: \n")
+         #loop = asyncio.get_event_loop()
+         #print("Loop: \n", loop)
+         #print("\n\n")
+        #except:
+         #print("No running loop!")
+         #print("\n\n")     
 
 
         print("Running connect_ble asynchronously...")
@@ -111,14 +121,14 @@ class ConnectingState(State):
         
 
 
-        try:
-         print("Data about event loop after connect_ble: \n")
-         loop = asyncio.get_event_loop()
-         print("Loop: \n", loop)
-         print("\n\n")
-        except:
-         print("No running loop!")
-         print("\n\n")   
+        #try:
+         #print("Data about event loop after connect_ble: \n")
+         #loop = asyncio.get_event_loop()
+         #print("Loop: \n", loop)
+         #print("\n\n")
+        #except:
+         #print("No running loop!")
+         #print("\n\n")   
 
         conn_flag = "1"
         return IdleState()	

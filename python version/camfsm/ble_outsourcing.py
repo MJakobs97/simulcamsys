@@ -15,33 +15,30 @@ logger = logging.getLogger()
 
 def get_or_create_eventloop():
     try:
-        return asyncio.get_event_loop()
-    except:
-        print("No current event loop in thread")
-        if "There is no current event loop in thread" in str(ex):
+        return asyncio.get_running_loop()
+    except Exception as ex:
+        print("Exception in get_or_create_eventloop(): \n", str(ex))
+        if "no running event loop" in str(ex):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            return asyncio.get_running_loop()
+            return asyncio.get_event_loop()
 
 async def rec_start(client, address):
     try:
-     loop = asyncio.new_event_loop()
-     
-     print("rec_start - Loop data: \n", loop)
-     asyncio.set_event_loop(loop)
-     asyncio.run(await client.write_gatt_char(address, bytearray([3, 1, 1, 1])))
-    except Exception as e:
-     print(e)
+     await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+    except Exception as ex:
+     print("Exception in rec_start: \n", ex)
 
 async def rec_stop(client, address):
     try:
-     loop= asyncio.new_event_loop()
-     
-     print("rec_stop - Loop data: \n")
-     asyncio.set_event_loop(loop)
-     asyncio.run(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
-    except Exception as e:
-     print(e)
+     await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+    except Exception as ex:
+     print("Exception in rec_stop: \n", ex)
+def rec_start_norm(client, address):
+    try:
+     client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+    except Exception as ex:
+     print("Exception in rec_start_norm(): \n", str(ex))
 
 
 async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
