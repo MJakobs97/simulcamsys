@@ -7,8 +7,7 @@ import re
 import asyncio
 import logging
 import argparse
-#import time
-#import trio
+import traceback
 from typing import Dict, Any, List, Callable, Pattern
 
 from bleak import BleakScanner, BleakClient
@@ -117,14 +116,16 @@ class ConnectingState(State):
 
         print("Running connect_ble asynchronously...")
         #clients = await connect_ble(dummy_notification_handler, identifier)
-	
         try:
          print("Current Loop: \n", asyncio.get_running_loop())
         except Exception as ex:
          print("Exception before asyncio.run(): \n", ex)
-
-        clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
-        
+        try:
+         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
+        except Exception as ex:
+         print(ex)
+         print("-----------------------------------------------------------------------------------------------")
+         traceback.print_exc()
 
 
         #try:
