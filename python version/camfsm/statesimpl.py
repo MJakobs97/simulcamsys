@@ -33,11 +33,11 @@ class IdleState(State):
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
-          #trio.run(rec_start, client, address)
+          asyncio.run(rec_start(client, address))
           #rec_start_norm(client, address)
-          addresses = addresses + client.address + " " 
-         call = "sudo python ./main.py --address "+addresses+" --command "+ """ +"record start"+ """
-         os.system(call)
+          #addresses = addresses + client.address + " " 
+         #call = "sudo python ./main.py --address "+addresses+" --command "+ """ +"record start"+ """
+         #os.system(call)
          return RecordingState()
         except Exception as ex: 
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -59,7 +59,7 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         #trio.run(rec_stop(client, address))
+         asyncio.run(rec_stop(client, address))
 
         return IdleState()
        if event == 'dms1':
@@ -117,6 +117,12 @@ class ConnectingState(State):
 
         print("Running connect_ble asynchronously...")
         #clients = await connect_ble(dummy_notification_handler, identifier)
+	
+        try:
+         print("Current Loop: \n", asyncio.get_running_loop())
+        except Exception as ex:
+         print("Exception before asyncio.run(): \n", ex)
+
         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
         
 
