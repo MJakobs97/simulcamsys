@@ -34,12 +34,6 @@ async def rec_stop(client, address):
      await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
-def rec_start_norm(client, address):
-    try:
-     client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
-    except Exception as ex:
-     print("Exception in rec_start_norm(): \n", str(ex))
-
 
 async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
    	    #DO NOT TOUCH THIS FUNCTION! IT IS WORKING AS EXPECTED!
