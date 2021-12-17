@@ -30,3 +30,9 @@ try:
 
 finally: 
 	pass
+
+
+
+if __name__ == "__smController__":
+
+ asyncio.run(smController())
