@@ -47,7 +47,8 @@ class IdleState(State):
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
 
           #----Testing NEW WAY TO CALL COROUTINE----
-          asyncio.new_event_loop().run_until_complete(rec_start(client, address))
+          asyncio.set_event_loop(asyncio.new_event_loop())
+          asyncio.get_event_loop().run_until_complete(rec_start(client, address))
 
 
          return RecordingState()
@@ -84,7 +85,8 @@ class RecordingState(State):
          #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
 
          #----Testing NEW WAY TO CALL COROUTINE----
-         asyncio.new_event_loop().run_until_complete(rec_stop(client, address))
+         asyncio.set_event_loop(asyncio.new_event_loop())
+         asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
                  
         return IdleState()
        if event == 'dms1':
