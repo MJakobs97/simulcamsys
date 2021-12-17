@@ -32,8 +32,17 @@ class IdleState(State):
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
+          loop = asyncio.new_event_loop()
+          asyncio.set_event_loop(loop)
+
+
+
+
+
+          #loop.run_until_complete(rec_start(client, address))
+          #asyncio.run(rec_start(client, address))
           future = asyncio.run_coroutine_threadsafe(rec_start(client, address), asyncio.get_event_loop())
-          result = future.result
+          result = future.result()
           #asyncio.run(rec_start(client, address))
           #rec_start_norm(client, address)
           #addresses = addresses + client.address + " " 
@@ -61,6 +70,12 @@ class RecordingState(State):
         for client in clients:
          address = COMMAND_REQ_UUID
          #asyncio.run(rec_stop(client, address))
+         #loop = asyncio.new_event_loop()
+         #asyncio.set_event_loop(loop)
+         
+
+         #loop.run_until_complete(rec_stop(client, address))         
+         #asyncio.run(rec_start(client, address))
          future = asyncio.run_coroutine_threadsafe(rec_stop(client, address), asyncio.get_event_loop())
          result = future.result()
 
