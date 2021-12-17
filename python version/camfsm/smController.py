@@ -14,14 +14,12 @@ def BT_connect_handler():
 def BT_rec_stop():
  print('recording trigger released!')
  global sm
- loop = asyncio.new_event_loop()
- loop.run_until_complete(sm.on_event('dms0'))
+ sm.on_event('dms0')
 
 def BT_rec_start():
  print('recording trigger pressed!')
  global sm
- loop = asyncio.new_event_loop()
- loop.run_until_complete(sm.on_event('dms1'))
+ sm.on_event('dms1')
 
 trigger = Button(3, hold_time=0.25)
 button_conn = Button(4, hold_time=1)
