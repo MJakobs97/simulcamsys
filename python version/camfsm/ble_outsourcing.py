@@ -19,6 +19,7 @@ def get_or_create_eventloop():
     except Exception as ex:
         print("Exception in get_or_create_eventloop(): \n", str(ex))
         if "no running event loop" in str(ex):
+            print("Setting up a new one: \n")
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             return asyncio.get_event_loop()

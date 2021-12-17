@@ -48,7 +48,8 @@ class IdleState(State):
 
           #----Testing NEW WAY TO CALL COROUTINE----
           #asyncio.set_event_loop(asyncio.new_event_loop())
-          asyncio.get_running_loop().run_until_complete(rec_start(client, address))
+          get_or_create_eventloop().run_until_complete(rec_start(client, address))
+          #asyncio.get_event_loop().run_until_complete(rec_start(client, address))
 
 
          return RecordingState()
@@ -86,7 +87,8 @@ class RecordingState(State):
 
          #----Testing NEW WAY TO CALL COROUTINE----
          #asyncio.set_event_loop(asyncio.new_event_loop())
-         asyncio.get_running_loop().run_until_complete(rec_stop(client, address))
+         get_or_create_eventloop().run_until_complete(rec_stop(client, address))
+         #asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
                  
         return IdleState()
        if event == 'dms1':
