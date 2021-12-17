@@ -47,12 +47,13 @@ class IdleState(State):
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
 
           #----Testing NEW WAY TO CALL COROUTINE----
-          asyncio.set_event_loop(asyncio.new_event_loop())
+          #asyncio.set_event_loop(asyncio.new_event_loop())
           get_or_create_eventloop().run_until_complete(rec_start(client, address))
           #asyncio.get_event_loop().run_until_complete(rec_start(client, address))
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
           #future = asyncio.ensure_future(rec_start(client, address))
           #asyncio.get_event_loop().run_until_complete(future)
+          
          return RecordingState()
         except Exception as ex: 
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -87,11 +88,12 @@ class RecordingState(State):
          #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
 
          #----Testing NEW WAY TO CALL COROUTINE----
-         asyncio.set_event_loop(asyncio.new_event_loop())
+         #asyncio.set_event_loop(asyncio.new_event_loop())
          get_or_create_eventloop().run_until_complete(rec_stop(client, address))
          #asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
          #future = asyncio.ensure_future(rec_stop(client, address))   
          #asyncio.get_event_loop().run_until_complete(future)
+         
         return IdleState()
        if event == 'dms1':
         print(self.count)
