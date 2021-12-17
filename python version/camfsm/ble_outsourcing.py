@@ -24,12 +24,14 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
 
 async def rec_start(client, address):
+    loop = get_or_create_eventloop()
     try:
      await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
     except Exception as ex:
      print("Exception in rec_start: \n", ex)
 
 async def rec_stop(client, address):
+    loop = get_or_create_eventloop()
     try:
      await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:

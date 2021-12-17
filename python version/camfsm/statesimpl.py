@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, rec_start_norm
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop
 
 import os
 import subprocess
