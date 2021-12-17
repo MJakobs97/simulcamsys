@@ -33,8 +33,10 @@ class IdleState(State):
          for client in clients:
           address = COMMAND_REQ_UUID
           #----THIS ----
-          #loop = asyncio.new_event_loop()
-          #asyncio.set_event_loop(loop)
+          loop = asyncio.new_event_loop()
+          asyncio.set_event_loop(loop)
+          print("Is loop closed: \n", loop.is_closed())
+
           #print("Going to execute on this particular loop: \n", loop)          
           #future = asyncio.ensure_future(rec_start(client, address))
           #loop.run_until_complete(future)
@@ -66,8 +68,9 @@ class RecordingState(State):
         for client in clients:
          address = COMMAND_REQ_UUID
          #----THIS ----
-         #loop = asyncio.new_event_loop()
-         #asyncio.set_event_loop(loop)
+         loop = asyncio.new_event_loop()
+         asyncio.set_event_loop(loop)
+         print("Is loop closed: \n", loop.is_closed())
          #print("Going to execute on this particular loop: \n", loop)         
          #future = asyncio.ensure_future(rec_stop(client, address))
          #loop.run_until_complete(future)
