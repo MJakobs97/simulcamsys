@@ -43,8 +43,11 @@ class IdleState(State):
           #loop.close()
           
           #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----  
-          asyncio.run(rec_start(client, address))
+          #asyncio.run(rec_start(client, address))
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+
+          #----Testing NEW WAY TO CALL COROUTINE----
+          asyncio.new_event_loop().run_until_complete(rec_start(client, address))
 
 
          return RecordingState()
@@ -77,8 +80,11 @@ class RecordingState(State):
          #loop.run_until_complete(future)
 
          #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----
-         asyncio.run(rec_stop(client, address))
+         #asyncio.run(rec_stop(client, address))
          #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+
+         #----Testing NEW WAY TO CALL COROUTINE----
+         asyncio.new_event_loop().run_until_complete(rec_stop(client, address))
                  
         return IdleState()
        if event == 'dms1':
@@ -127,7 +133,7 @@ class ConnectingState(State):
         try:
          #clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
          #clients = await connect_ble(dummy_notification_handler, args.identifier)
-         clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
+         clients = asyncio.new_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
         except Exception as ex:
          print(ex)
          print("-----------------------------------------------------------------------------------------------")
