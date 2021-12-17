@@ -1,5 +1,7 @@
 # ble_connect.py/Open GoPro, Version 2.0 (C) Copyright 2021 GoPro, Inc. (http://gopro.com/OpenGoPro).
 # This copyright was auto-generated on Wed, Sep  1, 2021  5:05:56 PM
+#This product and/or service is not affiliated with, endorsed by or in any way associated with GoPro Inc. or its products and services. 
+#GoPro, HERO, and their respective logos are trademarks or registered trademarks of GoPro, Inc.
 
 import re
 import asyncio
@@ -16,8 +18,6 @@ logger = logging.getLogger()
 
 GOPRO_BASE_UUID = "b5f9{}-aa8d-11e3-9046-0002a5d5c51b"
 GOPRO_BASE_URL = "http://10.5.5.9:8080"
-
-
 
 async def connect_ble(
     notification_handler: Callable[[int, bytes], None], identifier: str = None
@@ -64,9 +64,7 @@ async def connect_ble(
 
     for x in matched_devices:
      device = x 
-
-    #device = matched_devices[0]
-
+    
      logger.info(f"Establishing BLE connection to {device}...")
      client = BleakClient(device)
      await client.connect(timeout=15)
@@ -106,18 +104,13 @@ async def main(identifier):
     SETTINGS_RSP_UUID = GOPRO_BASE_UUID.format("0075")
 
     for client in clients:
-#     event.clear()
      await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 1]))
- #    await event.wait()
-     #await client.disconnect()
-    
-    time.sleep(3)
+
+    time.sleep(6)
     for client in clients: 
-  #   event.clear()
      await client.write_gatt_char(COMMAND_REQ_UUID, bytearray([3, 1, 1, 0]))
-   #  await event.wait()
+
     for client in clients: 
-    # event.clear()
      await client.disconnect()
 
 if __name__ == "__main__":

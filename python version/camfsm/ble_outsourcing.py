@@ -82,7 +82,11 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
 
              logger.info(f"Establishing BLE connection to {device}...")
              client = BleakClient(device)
-             await client.connect(timeout=15)
+             try:
+              await client.connect(timeout=15)
+             except Exception as ex:
+              print("Exception: \n", ex)
+              raise
 
              logger.info("BLE Connected!")
 

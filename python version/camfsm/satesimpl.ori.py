@@ -25,20 +25,16 @@ class IdleState(State):
        print("Event: ", event)
        global conn_flag
        print("Conn_flag: ", conn_flag)
-       
-       
+
+
        if ((event == 'dms1') & (conn_flag == "1")):
         try:
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
-          future = asyncio.run_coroutine_threadsafe(rec_start(client, address), asyncio.get_event_loop())
-          result = future.result
-          #asyncio.run(rec_start(client, address))
-          #rec_start_norm(client, address)
-          #addresses = addresses + client.address + " " 
-         #call = "sudo python ./main.py --address "+addresses+" --command "+ """ +"record start"+ """
-         #os.system(call)
+          loop = get_or_create_eventloop()
+          future = asyncio.run_coroutine_threadsafe((rec_start(client, address)), loop)
+          result = future.result()
          return RecordingState()
         except Exception as ex: 
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -60,8 +56,8 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         #asyncio.run(rec_stop(client, address))
-         future = asyncio.run_coroutine_threadsafe(rec_stop(client, address), asyncio.get_event_loop())
+         loop = get_or_create_eventloop() 
+         future = asyncio.run_coroutine_threadsafe((rec_stop(client, address)), loop)
          result = future.result()
 
         return IdleState()
@@ -102,18 +98,22 @@ class ConnectingState(State):
         COMMAND_RSP_UUID = GOPRO_BASE_UUID.format("0073")
         SETTINGS_REQ_UUID = GOPRO_BASE_UUID.format("0074")
         SETTINGS_RSP_UUID = GOPRO_BASE_UUID.format("0075")	
+
+
         parser = argparse.ArgumentParser(description="Connect to a GoPro camera, pair, then enable notifications.")
         parser.add_argument("-i","--identifier",type=str,help="Last 4 digits of GoPro serial number, which is the last 4 digits of the default camera SSID. If not used, first discovered GoPro will be connected to",default=None)    
         args = parser.parse_args()
 
 
         print("Running connect_ble asynchronously...")
+
         try:
-         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
-        except Exception as ex:
-         print(ex)
-         print("-----------------------------------------------------------------------------------------------")
+         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier),  debug=True)
+        except Exception as ex: 
+         print("Error while connecting: ", ex)
          traceback.print_exc()
+
+
 
         conn_flag = "1"
         return IdleState()	
