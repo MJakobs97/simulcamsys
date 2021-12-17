@@ -32,22 +32,18 @@ class IdleState(State):
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
-          loop = asyncio.new_event_loop()
-          asyncio.set_event_loop(loop)
+          #----THIS ----
+          #loop = asyncio.new_event_loop()
+          #asyncio.set_event_loop(loop)
+          #print("Going to execute on this particular loop: \n", loop)          
+          #future = asyncio.ensure_future(rec_start(client, address))
+          #loop.run_until_complete(future)
+          
+          #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----  
+          asyncio.run(rec_start(client, address))
 
 
 
-
-
-          #loop.run_until_complete(rec_start(client, address))
-          #asyncio.run(rec_start(client, address))
-          future = asyncio.run_coroutine_threadsafe(rec_start(client, address), asyncio.get_event_loop())
-          result = future.result()
-          #asyncio.run(rec_start(client, address))
-          #rec_start_norm(client, address)
-          #addresses = addresses + client.address + " " 
-         #call = "sudo python ./main.py --address "+addresses+" --command "+ """ +"record start"+ """
-         #os.system(call)
          return RecordingState()
         except Exception as ex: 
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -69,16 +65,17 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         #asyncio.run(rec_stop(client, address))
+         #----THIS ----
          #loop = asyncio.new_event_loop()
          #asyncio.set_event_loop(loop)
-         
+         #print("Going to execute on this particular loop: \n", loop)         
+         #future = asyncio.ensure_future(rec_stop(client, address))
+         #loop.run_until_complete(future)
 
-         #loop.run_until_complete(rec_stop(client, address))         
-         #asyncio.run(rec_start(client, address))
-         future = asyncio.run_coroutine_threadsafe(rec_stop(client, address), asyncio.get_event_loop())
-         result = future.result()
+         #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----
+         asyncio.run(rec_stop(client, address))
 
+                 
         return IdleState()
        if event == 'dms1':
         print(self.count)
