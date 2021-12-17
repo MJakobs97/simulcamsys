@@ -33,17 +33,17 @@ class IdleState(State):
          for client in clients:
           address = COMMAND_REQ_UUID
           #----THIS ----
-          loop = asyncio.new_event_loop()
-          asyncio.set_event_loop(loop)
+          #loop = asyncio.new_event_loop()
+          #asyncio.set_event_loop(loop)
           #print("Is loop closed: \n", loop.is_closed())
 
           #print("Going to execute on this particular loop: \n", loop)          
-          future = asyncio.ensure_future(rec_start(client, address))
-          loop.run_until_complete(future)
-          loop.close()
+          #future = asyncio.ensure_future(rec_start(client, address))
+          #loop.run_until_complete(future)
+          #loop.close()
           
           #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----  
-          #asyncio.run(rec_start(client, address))
+          asyncio.run(rec_start(client, address))
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
 
 
@@ -125,8 +125,9 @@ class ConnectingState(State):
 
         print("Running connect_ble asynchronously...")
         try:
-         clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
+         #clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
          #clients = await connect_ble(dummy_notification_handler, args.identifier)
+         clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
         except Exception as ex:
          print(ex)
          print("-----------------------------------------------------------------------------------------------")
