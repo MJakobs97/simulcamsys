@@ -26,10 +26,10 @@ def get_or_create_eventloop():
             return asyncio.get_event_loop()
 
 async def rec_start(client, address, loop):
-    the_running_loop = loop
+    the_running_loop = asyncio.get_running_loop()
     try:
-     the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 1])))
-     #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+     #the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 1])))
+     await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
     except Exception as ex:
      print("Exception in rec_start: \n", ex)
 
