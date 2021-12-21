@@ -37,7 +37,7 @@ class IdleState(State):
           #----COROUTINE GETS CALLED----
           start_loop = asyncio.new_event_loop()
           asyncio.set_event_loop(start_loop)          
-          start_loop.run_until_complete(rec_start(client, address))
+          asyncio.get_event_loop().run_until_complete(rec_start(client, address))
                   
          return RecordingState()
         except Exception as ex: 
@@ -80,7 +80,12 @@ class RecordingState(State):
          #asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
          #future = asyncio.ensure_future(rec_stop(client, address))   
          #asyncio.get_event_loop().run_until_complete(future)
-         
+
+         #----COROUTINE GETS CALLED----
+         stop_loop = asyncio.new_event_loop()
+         asyncio.set_event_loop(stop_loop)          
+         asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
+
         return IdleState()
        if event == 'dms1':
         print(self.count)
