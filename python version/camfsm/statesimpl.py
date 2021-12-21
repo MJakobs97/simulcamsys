@@ -48,9 +48,15 @@ class IdleState(State):
           #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
 
           #----Testing NEW WAY TO CALL COROUTINE----
-          asyncio.set_event_loop(asyncio.new_event_loop())
+          start_loop = asyncio.new_event_loop()
+          asyncio.set_event_loop(start_loop)
+          future = start_loop.create_task(rec_start(client, address, start_loop))
+          start_loop.run_until_complete(future)
+          
+          
+          #asyncio.get_event_loop().run_until_complete(rec_start(client, address, asyncio.get_event_loop()))
+
           #get_or_create_eventloop().run_until_complete(rec_start(client, address, asyncio.get_event_loop()))
-          asyncio.get_event_loop().run_until_complete(rec_start(client, address, asyncio.get_event_loop()))
 
 
           #asyncio.get_event_loop().run_until_complete(rec_start(client, address))
