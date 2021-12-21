@@ -36,10 +36,8 @@ class IdleState(State):
           
           #----COROUTINE GETS CALLED----
           start_loop = asyncio.new_event_loop()
-          asyncio.set_event_loop(start_loop)
-          
-          future = asyncio.get_event_loop().create_task(rec_start(client, address, start_loop))
-          asyncio.get_event_loop().run_until_complete(future)
+          asyncio.set_event_loop(start_loop)          
+          start_loop.run_until_complete(rec_start(client, address))
                   
          return RecordingState()
         except Exception as ex: 
