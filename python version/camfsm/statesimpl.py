@@ -15,6 +15,7 @@ from bleak.backends.device import BLEDevice as BleakDevice
 
 conn_flag = "0"
 clients : List[BleakClient] = []
+global_loop = ""
 
 class IdleState(State):
 
@@ -32,10 +33,30 @@ class IdleState(State):
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
-          
-          #----Executes, but future attached to different loop----
-          get_or_create_eventloop().run_until_complete(rec_start(client, address))
+          #----THIS ----
+          #loop = asyncio.new_event_loop()
+          #asyncio.set_event_loop(loop)
+          #print("Is loop closed: \n", loop.is_closed())
 
+          #print("Going to execute on this particular loop: \n", loop)          
+          #future = asyncio.ensure_future(rec_start(client, address))
+          #loop.run_until_complete(future)
+          #loop.close()
+          
+          #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----  
+          #asyncio.run(rec_start(client, address))
+          #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+
+          #----Testing NEW WAY TO CALL COROUTINE----
+          asyncio.set_event_loop(asyncio.new_event_loop())
+          #get_or_create_eventloop().run_until_complete(rec_start(client, address, asyncio.get_event_loop()))
+          asyncio.get_event_loop().run_until_complete(rec_start(client, address, asyncio.get_event_loop()))
+
+
+          #asyncio.get_event_loop().run_until_complete(rec_start(client, address))
+          #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+          #future = asyncio.ensure_future(rec_start(client, address))
+          #asyncio.get_event_loop().run_until_complete(future)
           
          return RecordingState()
         except Exception as ex: 
@@ -58,9 +79,26 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         
-         #----Executes, but future attached to different loop----
-         get_or_create_eventloop().run_until_complete(rec_stop(client, address))
+         #----THIS ----
+         #loop = asyncio.new_event_loop()
+         #asyncio.set_event_loop(loop)
+         #print("Is loop closed: \n", loop.is_closed())
+         #print("Going to execute on this particular loop: \n", loop)         
+         #future = asyncio.ensure_future(rec_stop(client, address))
+         #loop.run_until_complete(future)
+
+         #----DOES THE SAME AS THIS, YET EVERYTIME THE EXCEPTION "EVENT LOOP IS CLOSED" IS RAISED----
+         #asyncio.run(rec_stop(client, address))
+         #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+
+         #----Testing NEW WAY TO CALL COROUTINE----
+         asyncio.set_event_loop(asyncio.new_event_loop())
+         #get_or_create_eventloop().run_until_complete(rec_stop(client, address, asyncio.get_event_loop()))
+         asyncio.get_event_loop().run_until_complete(rec_stop(client, address, asyncio.get_event_loop()))
+
+         #asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
+         #future = asyncio.ensure_future(rec_stop(client, address))   
+         #asyncio.get_event_loop().run_until_complete(future)
          
         return IdleState()
        if event == 'dms1':

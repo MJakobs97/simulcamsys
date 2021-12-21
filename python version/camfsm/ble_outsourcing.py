@@ -15,24 +15,29 @@ logger = logging.getLogger()
 
 def get_or_create_eventloop():
     try:
-        return asyncio.get_running_loop()
+        return asyncio.get_event_loop()
     except Exception as ex:
         print("Exception in get_or_create_eventloop(): \n", str(ex))
-        if "no running event loop" in str(ex):
+        if "event loop" in str(ex):
             print("Setting up a new one: \n")
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
+            loop
             return asyncio.get_event_loop()
 
-async def rec_start(client, address):
+async def rec_start(client, address, loop):
+    the_running_loop = loop
     try:
-     await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
+     the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 1])))
+     #await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
     except Exception as ex:
      print("Exception in rec_start: \n", ex)
 
-async def rec_stop(client, address):
+async def rec_stop(client, address, loop):
+    the_running_loop = loop
     try:
-     await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+     the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
+     #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
 
