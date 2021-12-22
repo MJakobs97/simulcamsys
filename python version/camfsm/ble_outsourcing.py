@@ -31,11 +31,10 @@ async def rec_start(client, address):
     except Exception as ex:
      print("Exception in rec_start: \n", ex)
 
-async def rec_stop(client, address, loop):
-    the_running_loop = loop
+async def rec_stop(client, address):
     try:
-     the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
-     #await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
+     #the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
+     await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
 

@@ -35,8 +35,8 @@ class IdleState(State):
           address = COMMAND_REQ_UUID
           
           #----COROUTINE GETS CALLED----
-          start_loop = asyncio.new_event_loop()
-          asyncio.set_event_loop(start_loop)          
+          #start_loop = asyncio.new_event_loop()
+          #asyncio.set_event_loop(start_loop)          
           asyncio.get_event_loop().run_until_complete(rec_start(client, address))
                   
          return RecordingState()
@@ -113,7 +113,10 @@ class ConnectingState(State):
         try:
          #clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
          #clients = await connect_ble(dummy_notification_handler, args.identifier)
-         clients = asyncio.new_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
+         global global_loop
+         global_loop = asyncio.new_event_loop()
+         asyncio.set_event_loop(global_loop)
+         clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
         except Exception as ex:
          print(ex)
          print("-----------------------------------------------------------------------------------------------")
