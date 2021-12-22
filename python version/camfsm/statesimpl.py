@@ -35,8 +35,9 @@ class IdleState(State):
           address = COMMAND_REQ_UUID
           
           #----COROUTINE GETS CALLED----
-          #start_loop = asyncio.new_event_loop()
-          #asyncio.set_event_loop(start_loop)          
+          global global_loop
+          start_loop = global_loop
+          asyncio.set_event_loop(start_loop)          
           asyncio.get_event_loop().run_until_complete(rec_start(client, address))
                   
          return RecordingState()
@@ -62,7 +63,8 @@ class RecordingState(State):
          address = COMMAND_REQ_UUID
          
          #----COROUTINE GETS CALLED----
-         stop_loop = asyncio.new_event_loop()
+         global global_loop
+         stop_loop = global_loop
          asyncio.set_event_loop(stop_loop)          
          asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
 
