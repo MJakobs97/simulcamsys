@@ -3,6 +3,8 @@ python\ version/**
 initial\ shell\ version/**
 camfsm/commands.py
 camfsm/main.py
+camfsm/*.ori.*
+camfsm/__pycache__
 
 *.jpg
 *.png
