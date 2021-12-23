@@ -2,6 +2,7 @@ from state import State
 from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop
 
 import os
+import sys
 import subprocess
 import re
 import asyncio
@@ -25,7 +26,7 @@ class IdleState(State):
    def on_event(self, event):
        print("Event: ", event)
        global conn_flag
-       print("Conn_flag: ", conn_flag)
+       #print("Conn_flag: ", conn_flag)
        
        
        if ((event == 'dms1') & (conn_flag == "1")):
@@ -42,10 +43,10 @@ class IdleState(State):
                   
          return RecordingState()
         except Exception as ex: 
-         print("Exception in IdleSate.on_event(): \n", ex)
+         #print("Exception in IdleSate.on_event(): \n", ex)
 
        if event == 'dms2':
-        print("dms2 == 1, acting accordingly")
+        #print("dms2 == 1, acting accordingly")
         return ConnectingState()
 
        return self
@@ -70,7 +71,7 @@ class RecordingState(State):
 
         return IdleState()
        if event == 'dms1':
-        print(self.count)
+        #print(self.count)
         self.count+=1
 
         return self
@@ -84,7 +85,7 @@ class ConnectingState(State):
 
       def on_event(self, event):
        if event == 'dms2':
-        print("Received event: dms2 !")
+        #print("Received event: dms2 !")
         def dummy_notification_handler(handle: int, data: bytes) -> None:
          ...
         global clients
@@ -120,9 +121,10 @@ class ConnectingState(State):
          asyncio.set_event_loop(global_loop)
          clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
         except Exception as ex:
-         print(ex)
-         print("-----------------------------------------------------------------------------------------------")
-         traceback.print_exc()
+         #print(ex)
+         #print("-----------------------------------------------------------------------------------------------")
+         #traceback.print_exc()
+         sys.exit("Connection failed, must restart program! Wait ...")
 
         conn_flag = "1"
         return IdleState()	
