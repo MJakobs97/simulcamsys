@@ -1,0 +1,6 @@
+[Unit]
+Description=A finite state machine for controlling multiple gopro cameras (Hero9 Black) via BLE
+
+[Service]
+ExecStart=/bin/python3 ./camfsm/smController.py
+Restart=always
