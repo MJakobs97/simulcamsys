@@ -5,7 +5,7 @@ camfsm/commands.py
 camfsm/main.py
 camfsm/*.ori.*
 camfsm/__pycache__
-
+!setup.sh
 *.jpg
 *.png
 *.drawio
