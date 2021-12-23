@@ -5,6 +5,7 @@ import asyncio
 import logging
 import time
 import argparse
+import sys
 from typing import Dict, Any, List, Callable, Pattern
 
 from bleak import BleakScanner, BleakClient
@@ -30,13 +31,14 @@ async def rec_start(client, address):
      await client.write_gatt_char(address, bytearray([3, 1, 1, 1]))
     except Exception as ex:
      print("Exception in rec_start: \n", ex)
+     sys.exit("Rec_start failed, please await program restart!")
 
 async def rec_stop(client, address):
     try:
-     #the_running_loop.call_soon_threadsafe(await client.write_gatt_char(address, bytearray([3, 1, 1, 0])))
      await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
+     sys.exit("Rec_stop failed, please await program restart!")
 
 async def connect_ble(notification_handler: Callable[[int, bytes], None], identifier: str = None) -> BleakClient:
    	    #DO NOT TOUCH THIS FUNCTION! IT IS WORKING AS EXPECTED!
