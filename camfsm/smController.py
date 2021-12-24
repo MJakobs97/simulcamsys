@@ -21,8 +21,8 @@ def BT_rec_start():
  global sm
  sm.on_event('dms1')
 
-trigger = Button(3, hold_time=0.25)
-button_conn = Button(4, hold_time=1)
+trigger = Button(4, pull_up=False, hold_time=0.25)
+button_conn = Button(3, hold_time=1)
 
 def main():
  global sm 
