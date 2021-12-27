@@ -8,9 +8,10 @@ Developed to make use of a raspberry pi's GPIO-pins to react to momentary button
 This product and/or service is not affiliated with, endorsed by or in any way associated with GoPro Inc. or its products and services. 
 GoPro, HERO, and their respective logos are trademarks or registered trademarks of GoPro, Inc.
 
-## Requirements materials ##
+## Requirements / materials ##
 
-* A raspberry pi model 3b+ (or newer), set up to the current standards. Enabling ssh is required for initial configuration.
+* A raspberry pi model 3b+ (or newer), set up to the current standards (python3.9.2). Enabling ssh is required for initial configuration.
+* The GoPros intended to be connected (currently officially supports Hero 9 Black only)
 * At least two momentary switches
 * An external input voltage used to trigger the shutter control. In lieu of one, consider using a 3v3 pin with the corresponding switch.
 	* **IMPORTANT**: please regulate any input above 3.3v down to somewhere around 2.5-3v and limit its current to a maximum of 10mA to avoid frying the pi
@@ -42,7 +43,7 @@ GoPro, HERO, and their respective logos are trademarks or registered trademarks 
 
 Error | Solution
 ------|---------
-Python related error messages | install the most recent version of python and pip, then install missing modules
+Python related error messages | Install the most recent version of python and pip, then install missing modules
 Software caused connection abort | Turn off the 'Wireless Connection' option on each camera, then restart the application (or wait for it to restart in case of Useage.7), then refer back to [Useage](#Useage "Goto Useage")
 
 
