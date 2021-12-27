@@ -1,6 +1,6 @@
 # Simulcamsys #
 
-A python-based application intended to provide automated BLE connectivity and simultaneous shutter control over multiple GoPro cameras.
+A python-based command line application intended to provide automated BLE connectivity and simultaneous shutter control over multiple GoPro cameras.
 Developed to make use of a raspberry pi's GPIO-pins to react to momentary buttons as well as one 5v line input, for use on other systems this input handling should be adjusted.
 
 ## Legal disclaimer ##
