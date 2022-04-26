@@ -14,6 +14,9 @@ from typing import Dict, Any, List, Callable, Pattern
 from bleak import BleakScanner, BleakClient
 from bleak.backends.device import BLEDevice as BleakDevice
 
+import couchdb
+
+
 conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
@@ -22,6 +25,7 @@ class IdleState(State):
 
    def __init__(self):
     print("Switched to: ", str(self))
+    
 
    def on_event(self, event):
        print("Event: ", event)
