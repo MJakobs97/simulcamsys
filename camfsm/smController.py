@@ -1,45 +1,33 @@
 from statemachine import StateMachine
+import keyboard
 import time
-import asyncio
-from gpiozero import Button
-from signal import pause
+from pynput import keyboard
 
-sm = ""
+sm = StateMachine()
 
-def BT_connect_handler():
- print('discovery button pressed!')
- global sm
- sm.on_event('dms2')
+def on_press(key):
+        try:
+            ##print('Alphanumeric key pressed: {0} '.format(key.char))
+            ##print('Key that is currently being held down: {0}'.format(key.char))
+            if format(key.char) == 'r':
+                sm.on_event('dms1')
+                
+        except AttributeError:
+            print('')
 
-def BT_rec_stop():
- print('recording trigger released!')
- global sm
- sm.on_event('dms0')
+def on_release(key):
+        try:
+            if format(key.char) == 'r':
+                sm.on_event('dms0')
+                
+            if key == keyboard.Key.esc:
+                # Stop listener
+                return False
+        except AttributeError:
+            print('')
 
-def BT_rec_start():
- print('recording trigger pressed!')
- global sm
- sm.on_event('dms1')
-
-trigger = Button(4, pull_up=False, hold_time=0.25)
-button_conn = Button(3, hold_time=1)
-
-def main():
- global sm 
- sm = StateMachine()
-
-
- try: 
-  trigger.when_held = BT_rec_start
-  trigger.when_released = BT_rec_stop
-  button_conn.when_held = BT_connect_handler
-  pause()
-
- finally: 
-  pass
-
-
-
-if __name__ == "__main__":
-
- asyncio.run(main())
+# Collect events until released
+with keyboard.Listener(
+        on_press=on_press,
+        on_release=on_release) as listener:
+    listener.join()

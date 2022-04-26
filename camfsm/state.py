@@ -1,8 +1,8 @@
 class State(object):
     count = 0
     def __init__(self):
-        pass
-        
+        print ('Switching to: ', str(self))
+        self.count = 0
 
     def on_event(self, event):
 
