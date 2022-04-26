@@ -10,6 +10,8 @@ from typing import Dict, Any, List, Callable, Pattern
 from bleak import BleakScanner, BleakClient
 from bleak.backends.device import BLEDevice as BleakDevice
 
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
@@ -109,3 +111,14 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
              all_clients.append(client)
 
             return all_clients
+
+async def query(client, req_address):
+    try:
+     event=asyncio.Event()
+     await client.write_gatt_char(req_address, bytearray([0x01, 0x13]))
+     await event.wait()
+     #event.clear()
+     
+    except Exception as ex:
+     print("Exception in query: \n", ex)
+     sys.exit("Query failed, please await program restart!")
