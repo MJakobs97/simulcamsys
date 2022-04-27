@@ -107,7 +107,7 @@ class ConnectingState(State):
            global current_client
 
            #If event uuid is query_rsp_uuid append response.data to global da>
-           if current_client.services.characteristics[handle].uuid == QUERY_R>
+           if current_client.services.characteristics[handle].uuid == QUERY_RSP_UUID:
             #global rsp_data
             #rsp_data.append(response.data)
             print("Response data: "+str(response))
