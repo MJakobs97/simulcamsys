@@ -46,6 +46,7 @@ async def subscribe_status(client, address):
 #remaining dskspc = 54
 #to queryID 0x93 = 0x53 + 1001 = 0x93
     try:
+     print("Attempting to write_gatt_char")
      await client.write_gatt_char(address, bytearray([0x04,0x93,70,68,54]))
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
