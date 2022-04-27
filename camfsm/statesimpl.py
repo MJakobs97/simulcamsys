@@ -47,7 +47,7 @@ class IdleState(State):
                   
          return RecordingState()
         except Exception as ex: 
-         #print("Exception in IdleSate.on_event(): \n", ex)
+         print("Exception in IdleSate.on_event(): \n", ex)
 
        if event == 'dms2':
         #print("dms2 == 1, acting accordingly")
