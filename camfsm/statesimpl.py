@@ -91,7 +91,46 @@ class ConnectingState(State):
        if event == 'dms2':
         #print("Received event: dms2 !")
         def dummy_notification_handler(handle: int, data: bytes) -> None:
-         ...
+         print("dummy_notification_handler running")
+         #possibly move response outside of handler
+         response = Response()
+         response.accumulate(data)
+
+         query_event = asyncio.Event()
+
+         if response.is_received:
+           response.parse()
+           print("Response: ", response)
+
+           global current_client
+
+           #If event uuid is query_rsp_uuid append response.data to global da>
+           if current_client.services.characteristics[handle].uuid == QUERY_R>
+            #global rsp_data
+            #rsp_data.append(response.data)
+            print("Response data: "+str(response))
+
+
+           else:
+            print("Dummy_notification_handler: received rsp != query_rsp")
+           query_event.set()
+           event.set()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         global clients
         global conn_flag
 
