@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, query
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, query, subscribe_status
 from response import Response
 
 import os
@@ -177,7 +177,9 @@ class ConnectingState(State):
          #periodic_query_call(clients)
          
          #now loop over clients, sending query_req gatt_char
-         
+         address = QUERY_REQ_UUID
+         for s in clients:
+          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address))
 
 
 
