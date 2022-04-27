@@ -174,7 +174,13 @@ class ConnectingState(State):
          global_loop = asyncio.new_event_loop()
          asyncio.set_event_loop(global_loop)
          clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
-         periodic_query_call(clients)
+         #periodic_query_call(clients)
+         
+         #now loop over clients, sending query_req gatt_char
+         
+
+
+
         except Exception as ex:
          #print(ex)
          #print("-----------------------------------------------------------------------------------------------")
