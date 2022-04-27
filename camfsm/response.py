@@ -1,3 +1,6 @@
+import enum
+import logging
+
 class Response:
     def __init__(self) -> None:
         self.bytes_remaining = 0
@@ -45,7 +48,7 @@ class Response:
         # Append payload to buffer and update remaining / complete
         self.bytes.extend(buf)
         self.bytes_remaining -= len(buf)
-        logger.info(f"{self.bytes_remaining=}")
+        #logger.info(f"{self.bytes_remaining=}")
 
     def parse(self) -> None:
         self.id = self.bytes[0]
