@@ -39,7 +39,7 @@ async def rec_stop(client, address):
      print("Exception in rec_stop: \n", ex)
      sys.exit("Rec_stop failed, please await program restart!")
 
-async def subscribe_status(client, address):
+async def subscribe_status(client, address, event):
 #send "subscribe" request for push notifications about
 #int.bat% = 70
 #gps_status = 68
@@ -48,6 +48,8 @@ async def subscribe_status(client, address):
     try:
      print("Attempting to write_gatt_char")
      await client.write_gatt_char(address, bytearray([0x04,0x93,70,68,54]))
+     print("subscribe_Event: \n"+str(event))
+     #await event.wait()
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed")
@@ -126,7 +128,7 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
              for service in client.services:
                  for char in service.characteristics:
                      if "notify" in char.properties:
-                         logger.info(f"Enabling notification on char {char.uuid}")                         
+                         logger.info(f"Enabling notification on char {char.uuid}")
                          await client.start_notify(char, notification_handler)
 
              logger.info("Done enabling notifications")
