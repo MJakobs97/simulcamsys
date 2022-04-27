@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status
 
 import os
 import sys
@@ -110,7 +110,11 @@ class ConnectingState(State):
         COMMAND_REQ_UUID = GOPRO_BASE_UUID.format("0072")
         COMMAND_RSP_UUID = GOPRO_BASE_UUID.format("0073")
         SETTINGS_REQ_UUID = GOPRO_BASE_UUID.format("0074")
-        SETTINGS_RSP_UUID = GOPRO_BASE_UUID.format("0075")	
+        SETTINGS_RSP_UUID = GOPRO_BASE_UUID.format("0075")
+        QUERY_REQ_UUID = GOPRO_BASE_UUID.format("0076")
+        QUERY_RSP_UUID = GOPRO_BASE_UUID.format("0077")
+
+
         parser = argparse.ArgumentParser(description="Connect to a GoPro camera, pair, then enable notifications.")
         parser.add_argument("-i","--identifier",type=str,help="Last 4 digits of GoPro serial number, which is the last 4 digits of the default camera SSID. If not used, first discovered GoPro will be connected to",default=None)    
         args = parser.parse_args()
@@ -124,6 +128,13 @@ class ConnectingState(State):
          global_loop = asyncio.new_event_loop()
          asyncio.set_event_loop(global_loop)
          clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
+
+         #now send a status subscription request query for each client to receive push notifications about the requested status
+         address = QUERY_REQ_UUID
+         for s in clients:
+          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address))
+
+
         except Exception as ex:
          #print(ex)
          #print("-----------------------------------------------------------------------------------------------")
