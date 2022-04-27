@@ -102,21 +102,22 @@ class ConnectingState(State):
 
          if response.is_received:
            response.parse()
-           print("Response: ", response)
+           print("Response: \n", response)
 
            global current_client
+           global clients
+           for c in clients:  
+            #If event uuid is query_rsp_uuid append response.data to global da>
+            if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
+             #global rsp_data
+             #rsp_data.append(response.data)
+             print("Response data: "+str(response))
 
-           #If event uuid is query_rsp_uuid append response.data to global da>
-           if current_client.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-            #global rsp_data
-            #rsp_data.append(response.data)
-            print("Response data: "+str(response))
 
-
-           else:
-            print("Dummy_notification_handler: received rsp != query_rsp")
-           query_event.set()
-           event.set()
+            else:
+             print("Dummy_notification_handler: received rsp != query_rsp")
+            query_event.set()
+            #event.set()
 
 
 
