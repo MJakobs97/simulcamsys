@@ -48,8 +48,9 @@ async def subscribe_status(client, address, event):
     try:
      print("Attempting to write_gatt_char")
      await client.write_gatt_char(address, bytearray([0x04,0x93,70,68,54]))
+     await event.wait()
      print("subscribe_Event: \n"+str(event))
-     #await event.wait()
+     #print("hello")
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed")
