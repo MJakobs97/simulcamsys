@@ -92,13 +92,16 @@ class ConnectingState(State):
       def on_event(self, event):
        if event == 'dms2':
         #print("Received event: dms2 !")
+        global query_event
+        global response
+        response=Response()
+        query_event = asyncio.Event()
+        print("Query_event init: \n"+str(query_event))
+
         def dummy_notification_handler(handle: int, data: bytes) -> None:
          print("dummy_notification_handler running")
-         #possibly move response outside of handler
-         response = Response()
-         response.accumulate(data)
 
-         query_event = asyncio.Event()
+         response.accumulate(data)
 
          if response.is_received:
            response.parse()
@@ -109,30 +112,13 @@ class ConnectingState(State):
            for c in clients:  
             #If event uuid is query_rsp_uuid append response.data to global da>
             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-             #global rsp_data
-             #rsp_data.append(response.data)
              print("Response data: "+str(response))
 
 
             else:
              print("Dummy_notification_handler: received rsp != query_rsp")
-            query_event.set()
-            #event.set()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+           global query_event
+           query_event.set()
 
         global clients
         global conn_flag
@@ -174,7 +160,10 @@ class ConnectingState(State):
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
          for s in clients:
-          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address))
+          query_event.clear()
+          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
+          #asyncio.get_event_loop().run_until_complete(await query_event.wait())
+          #async query_event.wait()
 
 
         except Exception as ex:
