@@ -105,11 +105,15 @@ class ConnectingState(State):
 
            #If event uuid is query_rsp_uuid append response.data to global data storage
            if current_client.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-            global rsp_data
-            rsp_data.append(response.data)
+            #global rsp_data
+            #rsp_data.append(response.data)
+            print("Response data: "+str(response))
+
+
            else:
             print("Dummy_notification_handler: received rsp != query_rsp")
            query_event.set()
+           event.set()
 
         def periodic_query_call(clients):
           global global_loop
