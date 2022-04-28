@@ -102,25 +102,21 @@ class ConnectingState(State):
          print("dummy_notification_handler running")
 
          response.accumulate(data)
-
+         print("Data bytes: \n", data)
          if response.is_received:
            print("Yet to be parsed Response content: \n"+str(response))
            response.parse()
-           print("Response: \n", response)
-
            global current_client
            global clients
            for c in clients:
-           #print("UUID: \n"+str(c.services.characteristics[handle].uuid))
-           #print("QUERY_RSP_UUID: \n"+QUERY_RSP_UUID)
-            #If event uuid is query_rsp_uuid print response
+           #If event uuid is query_rsp_uuid print response
             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
              print("Response: \n"+str(response))
-             print("Response data: \n"+str(response.data))
-             global query_event
-             query_event.set()
+             #global query_event
+             #query_event.set()
             else:
              print("Dummy_notification_handler: received rsp != query_rsp")
+           global query_event
            query_event.set()
 
         global clients
@@ -170,4 +166,4 @@ class ConnectingState(State):
          sys.exit("Connection failed, must restart program! Wait ...")
 
         conn_flag = "1"
-        return IdleState()	
+        #return IdleState()	
