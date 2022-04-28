@@ -109,15 +109,17 @@ class ConnectingState(State):
 
            global current_client
            global clients
-           for c in clients:  
+           for c in clients:
+            print("UUID: \n"+str(c.services.characteristics[handle].uuid))
+            print("QUERY_RSP_UUID: \n"+QUERY_RSP_UUID)
             #If event uuid is query_rsp_uuid append response.data to global da>
             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
              print("Response data: "+str(response))
-
-
+             global query_event
+             query_event.set()
             else:
              print("Dummy_notification_handler: received rsp != query_rsp")
-           global query_event
+           #global query_event
            query_event.set()
 
         global clients
@@ -159,6 +161,10 @@ class ConnectingState(State):
 
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
+         #global global_loop
+         #global_loop = asyncio.new_event_loop()
+         #asyncio.set_event_loop(global_loop)
+
          for s in clients:
           query_event.clear()
           asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
