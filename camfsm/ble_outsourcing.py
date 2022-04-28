@@ -41,13 +41,14 @@ async def rec_stop(client, address):
 
 async def subscribe_status(client, address, query_event):
 #send "subscribe" request for push notifications about
-#int.bat% = 70
-#gps_status = 68
-#remaining dskspc = 54
+    BAT = 70 #int.bat% = 70
+    GPS = 68 #gps_status = 68
+    DSKSPC = 54 #remaining dskspc = 54
 #to queryID 0x93 = 0x53 + 1001 = 0x93
     try:
      print("Attempting to write_gatt_char")
-     await client.write_gatt_char(address, bytearray([0x04,0x93,70,68,54]))
+     query_event.clear()
+     await client.write_gatt_char(address, bytearray([0x04,0x93,BAT, GPS, DSKSPC]))
      await query_event.wait()
      print("subscribe query_event: \n"+str(query_event))
     except Exception as ex:
