@@ -39,7 +39,7 @@ async def rec_stop(client, address):
      print("Exception in rec_stop: \n", ex)
      sys.exit("Rec_stop failed, please await program restart!")
 
-async def subscribe_status(client, address, event):
+async def subscribe_status(client, address, query_event):
 #send "subscribe" request for push notifications about
 #int.bat% = 70
 #gps_status = 68
@@ -48,9 +48,8 @@ async def subscribe_status(client, address, event):
     try:
      print("Attempting to write_gatt_char")
      await client.write_gatt_char(address, bytearray([0x04,0x93,70,68,54]))
-     await event.wait()
-     print("subscribe_Event: \n"+str(event))
-     #print("hello")
+     await query_event.wait()
+     print("subscribe query_event: \n"+str(query_event))
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed")
