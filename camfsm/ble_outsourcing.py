@@ -55,11 +55,12 @@ async def subscribe_status(client, address, query_event):
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed \n")
 
-async def test_polling_response(client, address, query_event):
+async def test_polling_response(client, address, poll_event):
     try:
-     query_event.clear()
-     await client.write_gatt_char(address, bytearray([0x02,0x13,70])
-     await query_event.wait()
+     poll_event.clear()
+     await client.write_gatt_char(address, bytearray([0x02,0x13,70]))
+     await poll_event.wait()
+     print("Poll_event: \n"+str(poll_event))
     except Exception as ex:
      print("Exception in test_polling_response: \n", ex)
      sys.exit("Testing polling failed \n")
