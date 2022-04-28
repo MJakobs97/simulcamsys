@@ -162,8 +162,8 @@ class ConnectingState(State):
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
          for s in clients:
-          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
-
+          #asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
+          asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
 
         except Exception as ex:
          #print(ex)
