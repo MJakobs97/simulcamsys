@@ -45,12 +45,14 @@ async def subscribe_status(client, address, query_event):
     GPS = 68 #gps_status = 68
     DSKSPC = 54 #remaining dskspc = 54
 #to queryID 0x93 = 0x53 + 1001 = 0x93
+#queryID 0x53 works, but doesnt provide update notifications
+#queryID 0x93 does not work at all, returns empty response
     try:
      print("Attempting to write_gatt_char")
      query_event.clear()
-     await client.write_gatt_char(address, bytearray([0x04,0x93,BAT, GPS, DSKSPC]))
+     await client.write_gatt_char(address, bytearray([0x02,0x93,BAT]))
      await query_event.wait()
-     print("subscribe query_event: \n"+str(query_event))
+     #print("subscribe query_event: \n"+str(query_event))
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed \n")
