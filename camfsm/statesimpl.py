@@ -96,7 +96,7 @@ class ConnectingState(State):
         global response
         response=Response()
         query_event = asyncio.Event()
-        print("Query_event init: \n"+str(query_event))
+        #print("Query_event init: \n"+str(query_event))
 
         def dummy_notification_handler(handle: int, data: bytes) -> None:
          print("dummy_notification_handler running")
@@ -152,8 +152,6 @@ class ConnectingState(State):
 
         print("Running connect_ble asynchronously...")
         try:
-         #clients = asyncio.run(connect_ble(dummy_notification_handler, args.identifier))
-         #clients = await connect_ble(dummy_notification_handler, args.identifier)
          global global_loop
          global_loop = asyncio.new_event_loop()
          asyncio.set_event_loop(global_loop)
@@ -162,8 +160,8 @@ class ConnectingState(State):
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
          for s in clients:
-          #asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
-          asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
+          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
+          #asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
 
         except Exception as ex:
          #print(ex)
