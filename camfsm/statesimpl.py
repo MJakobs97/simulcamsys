@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses
 from response import Response
 
 
@@ -104,7 +104,7 @@ class ConnectingState(State):
          response.accumulate(data)
          print("Data bytes: \n", data)
          if response.is_received:
-           print("Yet to be parsed Response content: \n"+str(response))
+           #print("Yet to be parsed Response content: \n"+str(response))
            response.parse()
            global current_client
            global clients
@@ -158,6 +158,11 @@ class ConnectingState(State):
          for s in clients:
           asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
           #asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
+          asyncio.get_event_loop().run_until_complete(await_responses(query_event,2))
+         #task = asyncio.create_task(await_responses(query_event,2))
+         #await task
+
+
 
         except Exception as ex:
          #print(ex)
