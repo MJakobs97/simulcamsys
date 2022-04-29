@@ -23,6 +23,15 @@ conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
 
+server = couchdb.Server()
+database = server['gopro_stats']
+all_docs = []
+for id in database:
+ all_docs.append(id)
+
+doc = database[all_docs[0]]
+
+
 
 class IdleState(State):
 
