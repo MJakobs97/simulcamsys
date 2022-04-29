@@ -32,27 +32,23 @@ class IdleState(State):
    def on_event(self, event):
        print("Event: ", event)
        global conn_flag
-       #print("Conn_flag: ", conn_flag)
-       
-       
+
        if ((event == 'dms1') & (conn_flag == "1")):
         try:
          addresses = ""
          for client in clients:
           address = COMMAND_REQ_UUID
-          
+
           #----COROUTINE GETS CALLED----
           global global_loop
           start_loop = global_loop
-          asyncio.set_event_loop(start_loop)          
+          asyncio.set_event_loop(start_loop)
           asyncio.get_event_loop().run_until_complete(rec_start(client, address))
-                  
          return RecordingState()
-        except Exception as ex: 
+        except Exception as ex:
          print("Exception in IdleSate.on_event(): \n", ex)
 
        if event == 'dms2':
-        #print("dms2 == 1, acting accordingly")
         return ConnectingState()
 
        return self
@@ -68,35 +64,30 @@ class RecordingState(State):
        if event == 'dms0':
         for client in clients:
          address = COMMAND_REQ_UUID
-         
+
          #----COROUTINE GETS CALLED----
          global global_loop
          stop_loop = global_loop
-         asyncio.set_event_loop(stop_loop)          
+         asyncio.set_event_loop(stop_loop)
          asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
 
         return IdleState()
        if event == 'dms1':
-        #print(self.count)
         self.count+=1
 
         return self
-    
 
 class ConnectingState(State):
       def __init__(self):
        print("Switched to: ", str(self))
 
-      
 
       def on_event(self, event):
        if event == 'dms2':
-        #print("Received event: dms2 !")
         global query_event
         global response
         response=Response()
         query_event = asyncio.Event()
-        #print("Query_event init: \n"+str(query_event))
 
         def dummy_notification_handler(handle: int, data: bytes) -> None:
          print("dummy_notification_handler running")
@@ -104,7 +95,6 @@ class ConnectingState(State):
          response.accumulate(data)
          print("Data bytes: \n", data)
          if response.is_received:
-           #print("Yet to be parsed Response content: \n"+str(response))
            response.parse()
            global current_client
            global clients
@@ -112,8 +102,6 @@ class ConnectingState(State):
            #If event uuid is query_rsp_uuid print response
             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
              print("Response: \n"+str(response))
-             #global query_event
-             #query_event.set()
             else:
              print("Dummy_notification_handler: received rsp != query_rsp")
            global query_event
@@ -159,15 +147,7 @@ class ConnectingState(State):
           asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
           #asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
           asyncio.get_event_loop().run_until_complete(await_responses(query_event,2))
-         #task = asyncio.create_task(await_responses(query_event,2))
-         #await task
-
-
-
         except Exception as ex:
-         #print(ex)
-         #print("-----------------------------------------------------------------------------------------------")
-         #traceback.print_exc()
          sys.exit("Connection failed, must restart program! Wait ...")
 
         conn_flag = "1"
