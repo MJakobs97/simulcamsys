@@ -61,6 +61,19 @@ async def subscribe_status(client, address, query_event):
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed \n")
 
+async def get_status(client, address, query_event):
+ BAT = 70
+ GPS = 68
+ DSKSPC = 54
+
+ try:
+  query_event.clear()
+  await client.write_gatt_char(address, bytearray([0x04, 0x13,BAT,GPS,DSKSPC]))
+  await query_event.wait()
+ except Exception as ex:
+  print("Exception in get_status: \n", ex)
+  sys.exit("Gettin status failed \n")
+
 async def await_responses(query_event,delay):
     try:
      while True:
