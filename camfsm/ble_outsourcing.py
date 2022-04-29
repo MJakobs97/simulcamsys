@@ -45,22 +45,34 @@ async def subscribe_status(client, address, query_event):
     GPS = 68 #gps_status = 68
     DSKSPC = 54 #remaining dskspc = 54
 #to queryID 0x93 = 0x53 + 1001 = 0x93
-#queryID 0x53 works, but doesnt provide update notifications
+#queryID 0x53 works
 #queryID 0x93 does not work at all, returns empty response
     try:
      print("Attempting to write_gatt_char")
      query_event.clear()
      await client.write_gatt_char(address, bytearray([0x04,0x53,BAT,GPS,DSKSPC]))
      await query_event.wait()
-     while 1:
-      query_event.clear()
-      await query_event.wait()
-
-
-     #print("subscribe query_event: \n"+str(query_event))
+     #task = asyncio.create_task(await_responses(query_event, 3))
+     #while True:
+      #await asyncio.sleep(5)
+      #query_event.clear()
+      #await query_event.wait()
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
      sys.exit("Subscription failed \n")
+
+async def await_responses(query_event,delay):
+    try:
+     while True:
+      print("Awaiting response")
+      #await asyncio.sleep(delay)
+      query_event.clear()
+      await query_event.wait()
+    except Exception as ex:
+     print("Exception in await_responses: \n", ex)
+     sys.exit("Awaiting responses failed \n")
+
+
 
 async def test_polling_response(client, address, poll_event):
     try:
