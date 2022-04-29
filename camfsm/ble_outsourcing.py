@@ -50,8 +50,13 @@ async def subscribe_status(client, address, query_event):
     try:
      print("Attempting to write_gatt_char")
      query_event.clear()
-     await client.write_gatt_char(address, bytearray([0x02,0x93,BAT]))
+     await client.write_gatt_char(address, bytearray([0x04,0x53,BAT,GPS,DSKSPC]))
      await query_event.wait()
+     while 1:
+      query_event.clear()
+      await query_event.wait()
+
+
      #print("subscribe query_event: \n"+str(query_event))
     except Exception as ex:
      print("Exception in subscribe_status: \n", ex)
