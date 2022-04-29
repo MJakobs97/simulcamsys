@@ -1,5 +1,5 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses
+from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses, get_status
 from response import Response
 
 
@@ -23,6 +23,13 @@ conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
 
+#global QUERY_REQ_UUID 
+#QUERY_REQ_UUID =  GOPRO_BASE_UUID.format("0076")
+#global QUERY_RSP_UUID 
+#QUERY_RSP_UUID = GOPRO_BASE_UUID.format("0077")
+
+
+
 class IdleState(State):
 
    def __init__(self):
@@ -44,6 +51,7 @@ class IdleState(State):
           start_loop = global_loop
           asyncio.set_event_loop(start_loop)
           asyncio.get_event_loop().run_until_complete(rec_start(client, address))
+          asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
          return RecordingState()
         except Exception as ex:
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -70,6 +78,7 @@ class RecordingState(State):
          stop_loop = global_loop
          asyncio.set_event_loop(stop_loop)
          asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
+         asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
 
         return IdleState()
        if event == 'dms1':
@@ -114,6 +123,9 @@ class ConnectingState(State):
         global COMMAND_RSP_UUID 
         global SETTINGS_REQ_UUID 
         global SETTINGS_RSP_UUID 
+        global QUERY_REQ_UUID
+        global QUERY_RSP_UUID
+
 
         global GOPRO_BASE_UUID 
         global GOPRO_BASE_URL 
@@ -144,11 +156,11 @@ class ConnectingState(State):
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
          for s in clients:
-          asyncio.get_event_loop().run_until_complete(subscribe_status(s,address,query_event))
+          asyncio.get_event_loop().run_until_complete(get_status(s,address,query_event))
           #asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
-          asyncio.get_event_loop().run_until_complete(await_responses(query_event,2))
+          #asyncio.get_event_loop().run_until_complete(await_responses(query_event,2))
         except Exception as ex:
          sys.exit("Connection failed, must restart program! Wait ...")
 
         conn_flag = "1"
-        #return IdleState()	
+        return IdleState()	
