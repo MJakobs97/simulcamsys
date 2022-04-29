@@ -23,18 +23,12 @@ conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
 
-#global QUERY_REQ_UUID 
-#QUERY_REQ_UUID =  GOPRO_BASE_UUID.format("0076")
-#global QUERY_RSP_UUID 
-#QUERY_RSP_UUID = GOPRO_BASE_UUID.format("0077")
-
-
 
 class IdleState(State):
 
    def __init__(self):
     print("Switched to: ", str(self))
-    
+
 
    def on_event(self, event):
        print("Event: ", event)
@@ -157,8 +151,6 @@ class ConnectingState(State):
          address = QUERY_REQ_UUID
          for s in clients:
           asyncio.get_event_loop().run_until_complete(get_status(s,address,query_event))
-          #asyncio.get_event_loop().run_until_complete(test_polling_response(s,address,query_event))
-          #asyncio.get_event_loop().run_until_complete(await_responses(query_event,2))
         except Exception as ex:
          sys.exit("Connection failed, must restart program! Wait ...")
 
