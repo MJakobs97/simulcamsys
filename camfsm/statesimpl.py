@@ -11,25 +11,34 @@ import asyncio
 import logging
 import argparse
 import traceback
+import json
 from typing import Dict, Any, List, Callable, Pattern
 
 from bleak import BleakScanner, BleakClient
 from bleak.backends.device import BLEDevice as BleakDevice
 
 import couchdb
-
+from couchdb.mapping import Document, ListField, TextField, DictField, Mapping
 
 conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
 
+global database
 server = couchdb.Server()
 database = server['gopro_stats']
-all_docs = []
-for id in database:
- all_docs.append(id)
 
-doc = database[all_docs[0]]
+for id in database:
+ doc = database[id]
+ database.delete(doc)
+
+class DataRep(Document):
+ data = ListField(DictField(Mapping.build(address = TextField(), battery = TextField(), disk = TextField(), gps = TextField())))
+
+
+global dbdata
+dbdata = DataRep()
+
 
 
 
@@ -105,17 +114,23 @@ class ConnectingState(State):
          print("dummy_notification_handler running")
 
          response.accumulate(data)
-         print("Data bytes: \n", data)
+         #print("Data bytes: \n", data)
          if response.is_received:
            response.parse()
            global current_client
            global clients
+           global dbdata
            for c in clients:
            #If event uuid is query_rsp_uuid print response
             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-             print("Response: \n"+str(response))
+             print("Response from: \n", c.address)
+             print(str(response))
+             #data = json.dumps({"client_address":c.address, "response":json.dumps(str(response))}, indent=1)
+             dbdata.data.append(address=c.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54],"big"), gps = response.data[68][0])
             else:
              print("Dummy_notification_handler: received rsp != query_rsp")
+           global database
+           dbdata.store(database)
            global query_event
            query_event.set()
 
