@@ -33,6 +33,7 @@ for id in database:
  database.delete(doc)
 
 class DataRep(Document):
+ #data representation within couchdb, 1 "object" per client with MAC and actual data
  data = ListField(DictField(Mapping.build(address = TextField(), battery = TextField(), disk = TextField(), gps = TextField())))
 
 
@@ -120,17 +121,37 @@ class ConnectingState(State):
            global current_client
            global clients
            global dbdata
-           for c in clients:
-           #If event uuid is query_rsp_uuid print response
-            if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-             print("Response from: \n", c.address)
-             print(str(response))
-             #data = json.dumps({"client_address":c.address, "response":json.dumps(str(response))}, indent=1)
-             dbdata.data.append(address=c.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54],"big"), gps = response.data[68][0])
-            else:
-             print("Dummy_notification_handler: received rsp != query_rsp")
-           global database
            dbdata.store(database)
+           print("dbdata id: \n", dbdata.id)
+           dbdata = DataRep.load(database, dbdata.id)
+
+           if not dbdata.data: #db is empty
+            for c in clients:
+            #If event uuid is query_rsp_uuid print response
+             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
+              dbdata.data.append(address=c.address, battery=response.data[70][0], disk=int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
+             else:
+              #print("Dummy_notification_handler: received rsp != query_rsp")
+              apple = "orange"
+            print("DB was empty, added new client with following data: \n", str(response))
+            #dbdata.store(database)
+           else: #db is not empty
+            contains_client = False
+            for c in clients:
+             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
+              for d in dbdata.data:
+               if d["address"] == c.address:
+                contains_client = True
+                print("client in db, break\n")
+                break
+               else:
+                contains_client = False
+                print("client not in db, going to add with following data: \n", str(response))
+              if not contains_client:
+               print("DB was not empty AND client was not in DB, added client: \n", str(c))
+               print(response)
+               dbdata.data.append(address=c.address, battery=response.data[70][0], disk = int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
+            dbdata.store(database)
            global query_event
            query_event.set()
 
