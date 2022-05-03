@@ -151,8 +151,11 @@ class ConnectingState(State):
                print("DB was not empty AND client was not in DB, added client: \n", str(c))
                print(response)
                dbdata.data.append(address=c.address, battery=response.data[70][0], disk = int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
+               dbdata.store(database)
+               query_event.set()
+               break
             dbdata.store(database)
-           global query_event
+
            query_event.set()
 
         global clients
