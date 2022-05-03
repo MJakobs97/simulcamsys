@@ -24,6 +24,10 @@ conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
 
+global client_address_order
+client_address_order  = []
+client_address_read_index = 0
+
 global database
 server = couchdb.Server()
 database = server['gopro_stats']
@@ -122,19 +126,41 @@ class ConnectingState(State):
            global clients
            global dbdata
            dbdata.store(database)
-           print("dbdata id: \n", dbdata.id)
+           #print("dbdata id: \n", dbdata.id)
            dbdata = DataRep.load(database, dbdata.id)
+
+           #print("Received Response: \n", response)
+           #print("Response.id: \n", str(response.id))
+           #print("Handle: \n", handle)
+           global client_address_read_index
+           try:
+            for t in clients:
+             if t.address == client_address_order[client_address_read_index] and t.services.characteristics[handle].uuid == QUERY_RSP_UUID:
+              dbdata.data.append(address = t.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54], "big"), gps= response.data[68][0])
+              dbdata.store(database)
+              if client_address_read_index < 2:
+               client_address_read_index +=1
+              else:
+               client_address_read_index = 0
+              query_event.set()
+              return
+           except Exception as ex:
+            print("Exception: \n", ex)
+            print("Possibly useful data: \n", client_address_order, client_address_read_index)
+
+
+
+
 
            if not dbdata.data: #db is empty
             for c in clients:
             #If event uuid is query_rsp_uuid print response
              if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
               dbdata.data.append(address=c.address, battery=response.data[70][0], disk=int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
-             else:
-              #print("Dummy_notification_handler: received rsp != query_rsp")
-              apple = "orange"
-            print("DB was empty, added new client with following data: \n", str(response))
-            #dbdata.store(database)
+              print("DB was empty, added new client with following data: \n", str(response))
+              query_event.set()
+              dbdata.store(database)
+              break
            else: #db is not empty
             contains_client = False
             for c in clients:
@@ -194,11 +220,16 @@ class ConnectingState(State):
          global_loop = asyncio.new_event_loop()
          asyncio.set_event_loop(global_loop)
          clients = asyncio.get_event_loop().run_until_complete(connect_ble(dummy_notification_handler, args.identifier))
+         global client_address_order
+         for u in clients:
+          client_address_order.append(str(u.address))
+
 
          #now send a status subscription request query for each client to receive push notifications about the requested status
          address = QUERY_REQ_UUID
          for s in clients:
           asyncio.get_event_loop().run_until_complete(get_status(s,address,query_event))
+         print("Client_address_order: \n", client_address_order)
         except Exception as ex:
          sys.exit("Connection failed, must restart program! Wait ...")
 
