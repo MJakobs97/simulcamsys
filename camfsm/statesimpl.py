@@ -119,7 +119,6 @@ class ConnectingState(State):
          print("dummy_notification_handler running")
 
          response.accumulate(data)
-         #print("Data bytes: \n", data)
          if response.is_received:
            response.parse()
            global current_client
@@ -132,6 +131,13 @@ class ConnectingState(State):
             dbdata = DataRep.load(database, dbdata.id)
 
             if dbdata.data:
+             for i in range(len(dbdata.data)): 
+              print("Looking for: \n", client_address_order[client_address_read_index])
+              if str(client_address_order[client_address_read_index]) in dbdata.data[i].values():
+               dbdata.data.remove(dbdata.data[i])
+               print("Removed: \n", str(dbdata.data[i]))
+              
+             """ 
              print("dbdata.data:\n", str(dbdata.data))
              print("Len(dbdata.data)", len(dbdata.data))
              for i in range(len(dbdata.data)):
@@ -143,6 +149,7 @@ class ConnectingState(State):
               comp_address = data_dict["address"]
               if comp_address == client_address_order[client_address_read_index]:
                 dbdata.data.remove(dbdata.data[i])
+              """
            except Exception as ex:
             print("Could not remove existant entries. \n", ex)
 
