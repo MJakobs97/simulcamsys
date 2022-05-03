@@ -125,21 +125,34 @@ class ConnectingState(State):
            global current_client
            global clients
            global dbdata
-           dbdata.store(database)
-           #print("dbdata id: \n", dbdata.id)
-           dbdata = DataRep.load(database, dbdata.id)
-
-           #print("Received Response: \n", response)
-           #print("Response.id: \n", str(response.id))
-           #print("Handle: \n", handle)
            global client_address_read_index
+           try:
+            if not dbdata.id:
+             dbdata.store(database)
+            dbdata = DataRep.load(database, dbdata.id)
+
+            if dbdata.data:
+             print("dbdata.data:\n", str(dbdata.data))
+             print("Len(dbdata.data)", len(dbdata.data))
+             for i in range(len(dbdata.data)):
+
+              print("Len(dbdata.data): \n", len(dbdata.data))
+              data_dict = dbdata.data[i]
+              print("Data_dict.data: \n", str(data_dict.data))
+
+              comp_address = data_dict["address"]
+              if comp_address == client_address_order[client_address_read_index]:
+                dbdata.data.remove(dbdata.data[i])
+           except Exception as ex:
+            print("Could not remove existant entries. \n", ex)
+
            try:
             for t in clients:
              if t.address == client_address_order[client_address_read_index] and t.services.characteristics[handle].uuid == QUERY_RSP_UUID:
               dbdata.data.append(address = t.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54], "big"), gps= response.data[68][0])
               dbdata.store(database)
-              if client_address_read_index < 2:
-               client_address_read_index +=1
+              if client_address_read_index < (len(client_address_order)-1):
+               client_address_read_index = client_address_read_index +1
               else:
                client_address_read_index = 0
               query_event.set()
@@ -152,7 +165,7 @@ class ConnectingState(State):
 
 
 
-           if not dbdata.data: #db is empty
+           """if not dbdata.data: #db is empty
             for c in clients:
             #If event uuid is query_rsp_uuid print response
              if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
@@ -183,7 +196,7 @@ class ConnectingState(State):
             dbdata.store(database)
 
            query_event.set()
-
+           """
         global clients
         global conn_flag
 
