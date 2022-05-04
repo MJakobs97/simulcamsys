@@ -46,7 +46,7 @@ Error | Solution
 ------|---------
 Python related error messages | Install the most recent version of python and pip, then install missing modules
 Software caused connection abort | Turn off the 'Wireless Connection' option on each camera, then restart the application (or wait for it to restart in case of Useage.7), then refer back to [Useage](#Useage "Goto Useage")
-
+Noticeable delay between cameras | Currently not a bug, it's caused by database accesses
 
 
 
