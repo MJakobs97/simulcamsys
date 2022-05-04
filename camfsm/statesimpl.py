@@ -133,7 +133,7 @@ class ConnectingState(State):
             if dbdata.data:
              for i in range(len(dbdata.data)): 
               print("Looking for: \n", client_address_order[client_address_read_index])
-              if str(client_address_order[client_address_read_index]) in dbdata.data[i].values():
+              if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
                dbdata.data.remove(dbdata.data[i])
                print("Removed: \n", str(dbdata.data[i]))
               
