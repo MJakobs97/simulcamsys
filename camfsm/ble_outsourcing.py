@@ -44,13 +44,14 @@ async def subscribe_status(client, address, query_event):
     BAT = 70 #int.bat% = 70
     GPS = 68 #gps_status = 68
     DSKSPC = 54 #remaining dskspc = 54
+    VIDMIN = 35 #remaining minutes of capturing video with current settings = 35
 #to queryID 0x93 = 0x53 + 1001 = 0x93
 #queryID 0x53 works
 #queryID 0x93 does not work at all, returns empty response
     try:
      print("Attempting to write_gatt_char")
      query_event.clear()
-     await client.write_gatt_char(address, bytearray([0x04,0x53,BAT,GPS,DSKSPC]))
+     await client.write_gatt_char(address, bytearray([0x05,0x53,BAT,GPS,DSKSPC, VIDMIN]))
      await query_event.wait()
      #task = asyncio.create_task(await_responses(query_event, 3))
      #while True:
@@ -65,10 +66,11 @@ async def get_status(client, address, query_event):
  BAT = 70
  GPS = 68
  DSKSPC = 54
+ VIDMIN = 35
 
  try:
   query_event.clear()
-  await client.write_gatt_char(address, bytearray([0x04, 0x13,BAT,GPS,DSKSPC]))
+  await client.write_gatt_char(address, bytearray([0x05, 0x13,BAT,GPS,DSKSPC,VIDMIN]))
   await query_event.wait()
  except Exception as ex:
   print("Exception in get_status: \n", ex)
