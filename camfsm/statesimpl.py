@@ -6,6 +6,7 @@ from response import Response
 import os
 import sys
 import subprocess
+import threading
 import re
 import asyncio
 import logging
@@ -128,7 +129,10 @@ class ConnectingState(State):
            global dbdata
            global client_address_read_index
            try:
-            compare_and_remove(dbdata,client_address_order, client_address_read_index, database)  
+            compare_thread = threading.Thread(target=compare_and_remove, args=(dbdata, client_address_order, client_address_read_index, database))
+            compare_thread.daemon = True
+            compare_thread.start()
+            #compare_and_remove(dbdata,client_address_order, client_address_read_index, database)  
             """
             if not dbdata.id:
              dbdata.store(database)
@@ -142,10 +146,13 @@ class ConnectingState(State):
                print("Removed: \n", str(dbdata.data[i]))
             """            
            except Exception as ex:
-            print("Could not remove existant entries. \n", ex)
+            print("Exception while trying to remove existant entries: \n", ex)
 
            try:
-            client_address_read_index = upload_data(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database)
+            upload_thread = threading.Thread(target=upload_data, args=(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database))  
+            upload_thread.daemon = True
+            upload_thread.start()
+            #client_address_read_index = upload_data(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database)
             query_event.set()
             return
 
@@ -164,7 +171,7 @@ class ConnectingState(State):
               return
               """
            except Exception as ex:
-            print("Exception: \n", ex)
+            print("Exception while trying to upload data: \n", ex)
             print("Possibly useful data: \n", client_address_order, client_address_read_index)
 
         global clients
