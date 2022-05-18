@@ -20,6 +20,8 @@ from bleak.backends.device import BLEDevice as BleakDevice
 import couchdb
 from couchdb.mapping import Document, ListField, TextField, DictField, Mapping
 
+from notification_outsourcing import compare_and_remove, upload_data
+
 conn_flag = "0"
 clients : List[BleakClient] = []
 global_loop = ""
@@ -126,6 +128,8 @@ class ConnectingState(State):
            global dbdata
            global client_address_read_index
            try:
+            compare_and_remove(dbdata,client_address_order, client_address_read_index, database)  
+            """
             if not dbdata.id:
              dbdata.store(database)
             dbdata = DataRep.load(database, dbdata.id)
@@ -136,12 +140,16 @@ class ConnectingState(State):
               if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
                dbdata.data.remove(dbdata.data[i])
                print("Removed: \n", str(dbdata.data[i]))
-              
-            
+            """            
            except Exception as ex:
             print("Could not remove existant entries. \n", ex)
 
            try:
+            client_address_read_index = upload_data(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database)
+            query_event.set()
+            return
+
+            """
             for t in clients:
              if t.address == client_address_order[client_address_read_index] and t.services.characteristics[handle].uuid == QUERY_RSP_UUID:
               dbdata.data.append(address = t.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54], "big"), gps= response.data[68][0])
@@ -150,8 +158,11 @@ class ConnectingState(State):
                client_address_read_index = client_address_read_index +1
               else:
                client_address_read_index = 0
+             
+            
               query_event.set()
               return
+              """
            except Exception as ex:
             print("Exception: \n", ex)
             print("Possibly useful data: \n", client_address_order, client_address_read_index)
