@@ -137,19 +137,7 @@ class ConnectingState(State):
                dbdata.data.remove(dbdata.data[i])
                print("Removed: \n", str(dbdata.data[i]))
               
-             """ 
-             print("dbdata.data:\n", str(dbdata.data))
-             print("Len(dbdata.data)", len(dbdata.data))
-             for i in range(len(dbdata.data)):
-
-              print("Len(dbdata.data): \n", len(dbdata.data))
-              data_dict = dbdata.data[i]
-              print("Data_dict.data: \n", str(data_dict.data))
-
-              comp_address = data_dict["address"]
-              if comp_address == client_address_order[client_address_read_index]:
-                dbdata.data.remove(dbdata.data[i])
-              """
+            
            except Exception as ex:
             print("Could not remove existant entries. \n", ex)
 
@@ -168,42 +156,6 @@ class ConnectingState(State):
             print("Exception: \n", ex)
             print("Possibly useful data: \n", client_address_order, client_address_read_index)
 
-
-
-
-
-           """if not dbdata.data: #db is empty
-            for c in clients:
-            #If event uuid is query_rsp_uuid print response
-             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-              dbdata.data.append(address=c.address, battery=response.data[70][0], disk=int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
-              print("DB was empty, added new client with following data: \n", str(response))
-              query_event.set()
-              dbdata.store(database)
-              break
-           else: #db is not empty
-            contains_client = False
-            for c in clients:
-             if c.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-              for d in dbdata.data:
-               if d["address"] == c.address:
-                contains_client = True
-                print("client in db, break\n")
-                break
-               else:
-                contains_client = False
-                print("client not in db, going to add with following data: \n", str(response))
-              if not contains_client:
-               print("DB was not empty AND client was not in DB, added client: \n", str(c))
-               print(response)
-               dbdata.data.append(address=c.address, battery=response.data[70][0], disk = int.from_bytes(response.data[54],"big"), gps=response.data[68][0])
-               dbdata.store(database)
-               query_event.set()
-               break
-            dbdata.store(database)
-
-           query_event.set()
-           """
         global clients
         global conn_flag
 
