@@ -16,7 +16,7 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
     with lock:
      dbdata.data.remove(dbdata.data[i])
-     print("Removed: \n", str(dbdata.data[i]))
+     #print("Removed: \n", str(dbdata.data[i]))
        
 def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database):
  lock = Lock()
