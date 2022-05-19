@@ -151,7 +151,7 @@ class ConnectingState(State):
             print("Exception while trying to remove existant entries: \n", ex)
 
            try:
-            upload_thread = threading.Thread(target=upload_data, args=(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database))  
+            upload_thread = threading.Thread(target=upload_data, args=(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))  
             upload_thread.daemon = True
             upload_thread.start()
             #client_address_read_index = upload_data(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database)
