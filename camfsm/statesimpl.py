@@ -21,6 +21,8 @@ from bleak.backends.device import BLEDevice as BleakDevice
 import couchdb
 from couchdb.mapping import Document, ListField, TextField, DictField, Mapping
 
+from dataRep import DataRep
+
 from notification_outsourcing import compare_and_remove, upload_data
 
 conn_flag = "0"
@@ -38,11 +40,11 @@ database = server['gopro_stats']
 for id in database:
  doc = database[id]
  database.delete(doc)
-
+"""
 class DataRep(Document):
  #data representation within couchdb, 1 "object" per client with MAC and actual data
  data = ListField(DictField(Mapping.build(address = TextField(), battery = TextField(), disk = TextField(), gps = TextField())))
-
+"""
 
 global dbdata
 dbdata = DataRep()
