@@ -3,16 +3,18 @@ from threading import Lock
 
 def compare_and_remove(dbdata, client_address_order, client_address_read_index, database):
  lock = Lock()
- with lock:
-  if not dbdata.id:
+ 
+ if not dbdata.id:
+  with lock:
    dbdata.store(database)
-  dbdata = DataRep.load(database, dbdata.id)
+ dbdata = DataRep.load(database, dbdata.id)
     
-  if dbdata.data:
-   print(dbdata.data)
-   for i in range(len(dbdata.data)): 
-    print("Looking for: \n", client_address_order[client_address_read_index])
-    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
+ if dbdata.data:
+  print(dbdata.data)
+  for i in range(len(dbdata.data)): 
+   print("Looking for: \n", client_address_order[client_address_read_index])
+   if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
+    with lock:
      dbdata.data.remove(dbdata.data[i])
      print("Removed: \n", str(dbdata.data[i]))
        
