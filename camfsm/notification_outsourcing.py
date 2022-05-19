@@ -6,6 +6,7 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
  dbdata = DataRep.load(database, dbdata.id)
     
  if dbdata.data:
+  print(dbdata.data)
   for i in range(len(dbdata.data)): 
    print("Looking for: \n", client_address_order[client_address_read_index])
    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
