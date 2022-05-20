@@ -51,9 +51,6 @@ class DataRep(Document):
 global dbdata
 dbdata = DataRep()
 
-
-
-
 class IdleState(State):
 
    def __init__(self):
@@ -84,7 +81,6 @@ class IdleState(State):
         return ConnectingState()
 
        return self
-
 
 
 class RecordingState(State):
