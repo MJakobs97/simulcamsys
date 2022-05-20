@@ -132,11 +132,6 @@ class ConnectingState(State):
            global dbdata
            global client_address_read_index
            try:
-            #compare_thread = threading.Thread(target=compare_and_remove, args=(dbdata, client_address_order, client_address_read_index, database))
-            #compare_thread.daemon = True
-            #compare_thread.start()
-            #compare_and_remove(dbdata,client_address_order, client_address_read_index, database)  
-
             asyncio.get_event_loop().run_until_complete(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
             """
             if not dbdata.id:
@@ -154,13 +149,7 @@ class ConnectingState(State):
             print("Exception while trying to remove existant entries: \n", ex)
 
            try:
-            #upload_thread = threading.Thread(target=upload_data, args=(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))  
-            #upload_thread.daemon = True
-            #upload_thread.start()
-            #client_address_read_index = upload_data(clients, client_address_order, handle, QUERY_RSP_UUID, dbdata, response, database)
             asyncio.get_event_loop().run_until_complete(run_async_another_thread(upload_data(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database)))
-
-
             query_event.set()
             return
 
