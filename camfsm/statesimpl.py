@@ -134,9 +134,8 @@ class ConnectingState(State):
            try:
             
             compare_loop = global_loop
-            asyncio.set_event_loop(compare_loop)
-            
-            asyncio.get_event_loop().call_soon(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
+            asyncio.set_event_loop(compare_loop)            
+            asyncio.get_event_loop().run_until_complete(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
             """
             if not dbdata.id:
              dbdata.store(database)
@@ -154,7 +153,7 @@ class ConnectingState(State):
 
            try:
             
-            upload_loop = asyncio.new_event_loop()
+            upload_loop = global_loop
             asyncio.set_event_loop(upload_loop)
             asyncio.get_event_loop().run_until_complete(run_async_another_thread(upload_data(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database)))
             query_event.set()
