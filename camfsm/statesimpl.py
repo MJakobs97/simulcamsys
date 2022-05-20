@@ -132,7 +132,7 @@ class ConnectingState(State):
            global dbdata
            global client_address_read_index
            try:
-            
+            global global_loop
             compare_loop = global_loop
             asyncio.set_event_loop(compare_loop)            
             asyncio.get_event_loop().run_until_complete(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
