@@ -96,9 +96,9 @@ class RecordingState(State):
          #----COROUTINE GETS CALLED----
          global global_loop
          stop_loop = global_loop
-         nest_asyncio.apply(stop_loop)
+         #nest_asyncio.apply(stop_loop)
          asyncio.set_event_loop(stop_loop)
-         asyncio.get_event_loop().run_until_complete(rec_stop_threaded(client, address))
+         asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
          asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
 
         return IdleState()

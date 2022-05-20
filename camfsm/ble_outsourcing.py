@@ -35,7 +35,7 @@ async def rec_start(client, address):
 
 async def rec_stop(client, address):
     try:
-     await asyncio.sleep(5)
+     #await asyncio.sleep(5)
      await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
