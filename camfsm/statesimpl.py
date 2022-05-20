@@ -135,7 +135,8 @@ class ConnectingState(State):
             
             compare_loop = global_loop
             asyncio.set_event_loop(compare_loop)
-            asyncio.get_event_loop().gather(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
+            
+            asyncio.get_event_loop().call_soon(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
             """
             if not dbdata.id:
              dbdata.store(database)
