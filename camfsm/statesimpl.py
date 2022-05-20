@@ -157,6 +157,7 @@ class ConnectingState(State):
             asyncio.set_event_loop(upload_loop)
             index = asyncio.get_event_loop().run_until_complete(run_upload_threaded(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
             print("address_read_index in statesimpl after upload: \n", index)
+            client_address_read_index = index
             query_event.set()
             return
 
