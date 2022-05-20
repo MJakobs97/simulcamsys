@@ -29,12 +29,12 @@ def upload_data(clients, client_address_order, client_address_read_index, handle
 
 async def run_compare_threaded(dbdata, client_address_order, client_address_read_index, database):
  try:
-  await asyncio.get_event_loop().run_in_executor(None, functools.partial(compare_and_remove, (dbdata, client_address_order, client_address_read_index, database)))
+  await asyncio.get_event_loop().run_in_executor(None, functools.partial(compare_and_remove, dbdata, client_address_order, client_address_read_index, database))
  except Exception as ex: 
   print("Exception in run_compare_threaded: \n", ex)  
 
 async def run_upload_threaded(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database):
  try:
-  await asyncio.get_event_loop().run_in_executor(None, functools.partial(upload_data, (clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database)))
+  await asyncio.get_event_loop().run_in_executor(None, functools.partial(upload_data,clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
  except Exception as ex: 
   print("Exception in run_upload_threaded: \n", ex)
