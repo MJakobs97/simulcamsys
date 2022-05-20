@@ -149,7 +149,7 @@ class ConnectingState(State):
                print("Removed: \n", str(dbdata.data[i]))
             """            
            except Exception as ex:
-            print("Exception while trying to remove existant entries: \n", ex)
+            print("Exception while trying to remove existing entries: \n", ex)
 
            try:
             
