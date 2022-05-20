@@ -1,6 +1,6 @@
 from state import State
 from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses, get_status
-from notification_outsourcing import compare_and_remove, upload_data, run_async_another_thread
+from notification_outsourcing import compare_and_remove, upload_data, run_async_another_thread, run_compare_threaded, run_upload_threaded
 from response import Response
 
 
@@ -137,7 +137,7 @@ class ConnectingState(State):
             compare_loop = global_loop
             nest_asyncio.apply(compare_loop)
             asyncio.set_event_loop(compare_loop)            
-            asyncio.get_event_loop().run_until_complete(run_async_another_thread(compare_and_remove(dbdata, client_address_order, client_address_read_index, database)))
+            asyncio.get_event_loop().run_until_complete(run_compare_threaded(dbdata, client_address_order, client_address_read_index, database))
             """
             if not dbdata.id:
              dbdata.store(database)
@@ -158,7 +158,7 @@ class ConnectingState(State):
             upload_loop = global_loop
             nest_asyncio.apply(upload_loop)
             asyncio.set_event_loop(upload_loop)
-            asyncio.get_event_loop().run_until_complete(run_async_another_thread(upload_data(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database)))
+            asyncio.get_event_loop().run_until_complete(run_upload_threaded(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
             query_event.set()
             return
 
