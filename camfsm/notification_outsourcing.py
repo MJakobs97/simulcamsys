@@ -30,3 +30,10 @@ def upload_data(clients, client_address_order, client_address_read_index, handle
     else:
      client_address_read_index = 0
     return client_address_read_index
+
+
+async def run_async_another_thread(function):
+ try:
+  await asyncio.gather(asyncio.to_thread(function))
+ except Exception as ex:
+  print("Exception in run_async_another_thread: \n", str(ex))
