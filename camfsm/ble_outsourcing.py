@@ -1,3 +1,4 @@
+import functools
 import subprocess
 import re
 import asyncio
@@ -39,6 +40,12 @@ async def rec_stop(client, address):
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
      sys.exit("Rec_stop failed, please await program restart!")
+
+async def rec_stop_threaded(client, address):
+ try:
+  await asyncio.get_event_loop().run_in_executor(None, functools.partial(rec_stop, client, address))
+ except Exception as ex:
+  print("Exception in rec_stop_threaded: \n", ex)
 
 async def subscribe_status(client, address, query_event):
 #send "subscribe" request for push notifications about
