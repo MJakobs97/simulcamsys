@@ -1,6 +1,6 @@
 from state import State
 from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses, get_status
-from notification_outsourcing import compare_and_remove, upload_data, run_async_another_thread, run_compare_threaded, run_upload_threaded
+from notification_outsourcing import run_compare_threaded, run_upload_threaded
 from response import Response
 
 
