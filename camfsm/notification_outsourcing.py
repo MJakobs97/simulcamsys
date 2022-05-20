@@ -9,12 +9,12 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
  dbdata = DataRep.load(database, dbdata.id)
     
  if dbdata.data:
-  print(dbdata.data)
+  print("Dbdata.data in compare: \n",dbdata.data)
   for i in range(len(dbdata.data)): 
    print("Looking for: \n", client_address_order[client_address_read_index])
    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
     dbdata.data.remove(dbdata.data[i])
-    #print("Removed: \n", str(dbdata.data[i]))
+    print("Removed: \n", str(dbdata.data[i]))
        
 def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database):
   for t in clients:
