@@ -3,7 +3,7 @@ import asyncio
 import functools
 
 
-def compare_and_remove(dbdata, client_address_order, client_address_read_index, database): 
+def compare_and_remove(dbdata, client_address_order, client_address_read_index, database) -> DataRep: 
  if not dbdata.id:
   dbdata.store(database)
  dbdata = DataRep.load(database, dbdata.id)
@@ -15,6 +15,7 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
     dbdata.data.remove(dbdata.data[i])
     print("Removed: \n", str(dbdata.data[i]))
+    return dbdata
        
 def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database) -> int:
   for t in clients:
@@ -27,15 +28,17 @@ def upload_data(clients, client_address_order, client_address_read_index, handle
      client_address_read_index = 0
     return client_address_read_index
 
-async def run_compare_threaded(dbdata, client_address_order, client_address_read_index, database):
+async def run_compare_threaded(dbdata, client_address_order, client_address_read_index, database) -> DataRep:
  try:
   if type(client_address_read_index) == int: 
    print("Running compare threaded with this data: \n", str(client_address_order), client_address_read_index)
-   await asyncio.get_event_loop().run_in_executor(None, functools.partial(compare_and_remove, dbdata, client_address_order, client_address_read_index, database))
+   dbdata_modified = await asyncio.get_event_loop().run_in_executor(None, functools.partial(compare_and_remove, dbdata, client_address_order, client_address_read_index, database))
+   return dbdata_modified
   else:
    print("Client_address_read_index != int, aborting compare_and_remove()\n") 
  except Exception as ex: 
-  print("Exception in run_compare_threaded: \n", ex)  
+  print("Exception in run_compare_threaded: \n", ex)
+  print("Current read index: \n", client_address_read_index)  
 
 async def run_upload_threaded(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database) -> int:
  try:

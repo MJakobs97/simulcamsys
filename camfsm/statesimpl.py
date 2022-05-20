@@ -134,7 +134,10 @@ class ConnectingState(State):
             compare_loop = global_loop
             nest_asyncio.apply(compare_loop)
             asyncio.set_event_loop(compare_loop)            
-            asyncio.get_event_loop().run_until_complete(run_compare_threaded(dbdata, client_address_order, client_address_read_index, database))
+            data_modified = asyncio.get_event_loop().run_until_complete(run_compare_threaded(dbdata, client_address_order, client_address_read_index, database))
+            if type(data_modified) == DataRep:
+             dbdata = data_modified
+             
             """
             if not dbdata.id:
              dbdata.store(database)
