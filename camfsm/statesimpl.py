@@ -137,7 +137,7 @@ class ConnectingState(State):
             data_modified = asyncio.get_event_loop().run_until_complete(run_compare_threaded(dbdata, client_address_order, client_address_read_index, database))
             if type(data_modified) == DataRep:
              dbdata = data_modified
-             
+
             """
             if not dbdata.id:
              dbdata.store(database)
@@ -159,7 +159,7 @@ class ConnectingState(State):
             nest_asyncio.apply(upload_loop)
             asyncio.set_event_loop(upload_loop)
             index = asyncio.get_event_loop().run_until_complete(run_upload_threaded(clients, client_address_order,client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
-            print("address_read_index in statesimpl after upload: \n", index)
+            #print("address_read_index in statesimpl after upload: \n", index)
             if type(index) == int:
              client_address_read_index = index
             query_event.set()

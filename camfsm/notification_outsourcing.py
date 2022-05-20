@@ -9,12 +9,12 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
  dbdata = DataRep.load(database, dbdata.id)
     
  if dbdata.data:
-  print("Dbdata.data in compare: \n",dbdata.data)
+  #print("Dbdata.data in compare: \n",dbdata.data)
   for i in range(len(dbdata.data)): 
-   print("Looking for: \n", client_address_order[client_address_read_index])
+   #print("Looking for: \n", client_address_order[client_address_read_index])
    if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
     dbdata.data.remove(dbdata.data[i])
-    print("Removed: \n", str(dbdata.data[i]))
+    #print("Removed: \n", str(dbdata.data[i]))
     return dbdata
        
 def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database) -> int:
@@ -31,7 +31,7 @@ def upload_data(clients, client_address_order, client_address_read_index, handle
 async def run_compare_threaded(dbdata, client_address_order, client_address_read_index, database) -> DataRep:
  try:
   if type(client_address_read_index) == int: 
-   print("Running compare threaded with this data: \n", str(client_address_order), client_address_read_index)
+   #print("Running compare threaded with this data: \n", str(client_address_order), client_address_read_index)
    dbdata_modified = await asyncio.get_event_loop().run_in_executor(None, functools.partial(compare_and_remove, dbdata, client_address_order, client_address_read_index, database))
    return dbdata_modified
   else:
@@ -43,7 +43,7 @@ async def run_compare_threaded(dbdata, client_address_order, client_address_read
 async def run_upload_threaded(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database) -> int:
  try:
   if type(client_address_read_index) == int: 
-   print("Running upload threaded with this data: \n", str(client_address_order), client_address_read_index, str(dbdata))
+   #print("Running upload threaded with this data: \n", str(client_address_order), client_address_read_index, str(dbdata))
    index = await asyncio.get_event_loop().run_in_executor(None, functools.partial(upload_data,clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
    print("Read_index after upload: \n", index)
   else:
