@@ -74,8 +74,8 @@ class IdleState(State):
           global global_loop
           start_loop = global_loop
           asyncio.set_event_loop(start_loop)
-          asyncio.get_event_loop().run_until_complete(asyncio.to_thread(rec_start(client, address)))
-          #asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
+          asyncio.get_event_loop().run_until_complete(rec_start(client, address))
+          asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
          return RecordingState()
         except Exception as ex:
          print("Exception in IdleSate.on_event(): \n", ex)
@@ -101,8 +101,8 @@ class RecordingState(State):
          global global_loop
          stop_loop = global_loop
          asyncio.set_event_loop(stop_loop)
-         asyncio.get_event_loop().run_until_complete(asyncio.to_thread(rec_stop(client, address)))
-         #asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
+         asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
+         asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
 
         return IdleState()
        if event == 'dms1':
@@ -128,6 +128,7 @@ class ConnectingState(State):
          response.accumulate(data)
          if response.is_received:
            response.parse()
+           print("Response: \n", response)
            global current_client
            global clients
            global dbdata
