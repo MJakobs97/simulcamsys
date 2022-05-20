@@ -16,7 +16,7 @@ def compare_and_remove(dbdata, client_address_order, client_address_read_index, 
     dbdata.data.remove(dbdata.data[i])
     print("Removed: \n", str(dbdata.data[i]))
        
-def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database):
+def upload_data(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database) -> int:
   for t in clients:
    if t.address == client_address_order[client_address_read_index] and t.services.characteristics[handle].uuid == QUERY_RSP_UUID:
     dbdata.data.append(address = t.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54], "big"), gps= response.data[68][0])
@@ -37,6 +37,7 @@ async def run_compare_threaded(dbdata, client_address_order, client_address_read
 async def run_upload_threaded(clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database):
  try:
   print("Running upload threaded with this data: \n", str(client_address_order), client_address_read_index, str(dbdata))
-  await asyncio.get_event_loop().run_in_executor(None, functools.partial(upload_data,clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
+  index = await asyncio.get_event_loop().run_in_executor(None, functools.partial(upload_data,clients, client_address_order, client_address_read_index, handle, QUERY_RSP_UUID, dbdata, response, database))
+  print("Read_index after upload: \n", index)
  except Exception as ex: 
   print("Exception in run_upload_threaded: \n", ex)
