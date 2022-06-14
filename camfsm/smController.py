@@ -30,8 +30,8 @@ def main():
 
 
  try: 
-  trigger.when_held = BT_rec_start
-  trigger.when_released = BT_rec_stop
+  trigger.when_held = BT_rec_stop
+  trigger.when_released = BT_rec_start
   button_conn.when_held = BT_connect_handler
   pause()
 
