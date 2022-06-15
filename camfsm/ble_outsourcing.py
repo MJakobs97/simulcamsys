@@ -7,6 +7,7 @@ import time
 import argparse
 import sys
 from typing import Dict, Any, List, Callable, Pattern
+import concurrent.futures
 
 from bleak import BleakScanner, BleakClient
 from bleak.backends.device import BLEDevice as BleakDevice
@@ -35,7 +36,7 @@ async def rec_start(client, address):
 
 async def rec_stop(client, address):
     try:
-     #await asyncio.sleep(5)
+     await asyncio.sleep(5)
      await client.write_gatt_char(address, bytearray([3, 1, 1, 0]))
     except Exception as ex:
      print("Exception in rec_stop: \n", ex)
@@ -43,7 +44,8 @@ async def rec_stop(client, address):
 
 async def rec_stop_threaded(client, address):
  try:
-  await asyncio.get_event_loop().run_in_executor(None, functools.partial(rec_stop, client, address))
+   with concurrent.futures.ProcessPoolExecutor() as pool:
+    await asyncio.get_event_loop().run_in_executor(pool, functools.partial(rec_stop, client, address))
  except Exception as ex:
   print("Exception in rec_stop_threaded: \n", ex)
 
