@@ -49,6 +49,13 @@ async def rec_stop_threaded(client, address):
  except Exception as ex:
   print("Exception in rec_stop_threaded: \n", ex)
 
+async def rec_stop_all(clients, address):
+ funktionsliste = []
+ for client in clients:
+  funktionsliste.append(rec_stop(client, address))
+ res = await asyncio.gather(*funktionsliste, return_exceptions=True)
+
+
 async def subscribe_status(client, address, query_event):
 #send "subscribe" request for push notifications about
     BAT = 70 #int.bat% = 70
