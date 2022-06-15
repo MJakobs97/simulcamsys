@@ -173,7 +173,7 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
               logger.info(f"Establishing BLE connection to {device}...")
               client = BleakClient(device)
               try:
-               await client.connect(timeout=15)
+               await client.connect(timeout=20)
               except Exception as ex:
                #print("Exception: \n", ex)
                #raise
@@ -183,11 +183,13 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
 
 	     # Try to pair (on some OS's this will expectedly fail)
              logger.info("Attempting to pair...")
-             try:
-                 await client.pair()
-             except NotImplementedError:
-        	 # This is expected on Mac
-                 pass
+             for u in range(10):
+              try:
+               await client.pair()
+              except NotImplementedError:
+        	  #This is expected on Mac
+               continue
+              break
              logger.info("Pairing complete!")
 
 	     # Enable notifications on all notifiable characteristics
