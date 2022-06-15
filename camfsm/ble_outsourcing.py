@@ -156,15 +156,16 @@ async def connect_ble(notification_handler: Callable[[int, bytes], None], identi
              device = x 
 
 	    #device = matched_devices[0]
-
-             logger.info(f"Establishing BLE connection to {device}...")
-             client = BleakClient(device)
-             try:
-              await client.connect(timeout=15)
-             except Exception as ex:
-              print("Exception: \n", ex)
-              raise
-
+             for attempt in range(10):
+              logger.info(f"Establishing BLE connection to {device}...")
+              client = BleakClient(device)
+              try:
+               await client.connect(timeout=15)
+              except Exception as ex:
+               #print("Exception: \n", ex)
+               #raise
+               continue
+              break
              logger.info("BLE Connected!")
 
 	     # Try to pair (on some OS's this will expectedly fail)
