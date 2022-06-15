@@ -49,11 +49,17 @@ async def rec_stop_threaded(client, address):
  except Exception as ex:
   print("Exception in rec_stop_threaded: \n", ex)
 
+async def rec_start_all(clients, address):
+ startliste = []
+ for client in clients: 
+  startliste.append(rec_start(client, address))
+ res = await asyncio.gather(*startliste, return_exceptions=True)
+
 async def rec_stop_all(clients, address):
- funktionsliste = []
+ stopliste = []
  for client in clients:
-  funktionsliste.append(rec_stop(client, address))
- res = await asyncio.gather(*funktionsliste, return_exceptions=True)
+  stopliste.append(rec_stop(client, address))
+ res = await asyncio.gather(*stopliste, return_exceptions=True)
 
 
 async def subscribe_status(client, address, query_event):

@@ -1,14 +1,11 @@
 from state import State
-from ble_outsourcing import connect_ble, rec_start, rec_stop, get_or_create_eventloop, subscribe_status, await_responses, get_status, rec_stop_threaded, rec_stop_all
+from ble_outsourcing import connect_ble, get_status, rec_stop_all, rec_start_all
 from notification_outsourcing import run_compare_threaded, run_upload_threaded
 from response import Response
 
 
 import os
 import sys
-import subprocess
-import threading
-import re
 import asyncio
 import nest_asyncio
 import logging
@@ -63,15 +60,14 @@ class IdleState(State):
 
        if ((event == 'dms1') & (conn_flag == "1")):
         try:
-         addresses = ""
-         for client in clients:
-          address = COMMAND_REQ_UUID
+         address = COMMAND_REQ_UUID
+         global global_loop
+         start_loop = global_loop
+         asyncio.set_event_loop(start_loop)
+         asyncio.get_event_loop().run_until_complete(rec_start_all(clients, address))
 
+         for client in clients:
           #----COROUTINE GETS CALLED----
-          global global_loop
-          start_loop = global_loop
-          asyncio.set_event_loop(start_loop)
-          asyncio.get_event_loop().run_until_complete(rec_start(client, address))
           asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
          return RecordingState()
         except Exception as ex:
@@ -98,12 +94,8 @@ class RecordingState(State):
         asyncio.get_event_loop().run_until_complete(rec_stop_all(clients, address))
 
         for client in clients:
-         
          #----COROUTINE GETS CALLED----
-        
-         #asyncio.get_event_loop().run_until_complete(rec_stop(client, address))
          asyncio.get_event_loop().run_until_complete(get_status(client,QUERY_REQ_UUID,query_event))
-
         return IdleState()
        if event == 'dms1':
         self.count+=1
@@ -140,20 +132,7 @@ class ConnectingState(State):
             asyncio.set_event_loop(compare_loop)            
             data_modified = asyncio.get_event_loop().run_until_complete(run_compare_threaded(dbdata, client_address_order, client_address_read_index, database))
             if type(data_modified) == DataRep:
-             dbdata = data_modified
-
-            """
-            if not dbdata.id:
-             dbdata.store(database)
-            dbdata = DataRep.load(database, dbdata.id)
-
-            if dbdata.data:
-             for i in range(len(dbdata.data)): 
-              print("Looking for: \n", client_address_order[client_address_read_index])
-              if str(client_address_order[client_address_read_index]) == dbdata.data[i].address:
-               dbdata.data.remove(dbdata.data[i])
-               print("Removed: \n", str(dbdata.data[i]))
-            """            
+             dbdata = data_modified       
            except Exception as ex:
             print("Exception while trying to remove existing entries: \n", ex)
 
@@ -168,21 +147,6 @@ class ConnectingState(State):
              client_address_read_index = index
             query_event.set()
             return
-
-            """
-            for t in clients:
-             if t.address == client_address_order[client_address_read_index] and t.services.characteristics[handle].uuid == QUERY_RSP_UUID:
-              dbdata.data.append(address = t.address, battery = response.data[70][0], disk = int.from_bytes(response.data[54], "big"), gps= response.data[68][0])
-              dbdata.store(database)
-              if client_address_read_index < (len(client_address_order)-1):
-               client_address_read_index = client_address_read_index +1
-              else:
-               client_address_read_index = 0
-             
-            
-              query_event.set()
-              return
-              """
            except Exception as ex:
             print("Exception while trying to upload data: \n", ex)
             print("Possibly useful data: \n", client_address_order, client_address_read_index)
