@@ -36,7 +36,8 @@ def main():
   pause()
 
  finally: 
-  pass
+  #pass
+   exit()
 
 
 
